@@ -107,6 +107,7 @@ function initKeyboardShortcuts() {
     if (e.key === 'Escape') {
       closeModal('equipmentModal');
       closeModal('qrModal');
+      closeModal('changePasswordModal');
     }
   });
 }
@@ -205,24 +206,16 @@ async function handleLogin(e) {
       currentUser = data.user;
       localStorage.setItem('it_inventory_admin_user', JSON.stringify(currentUser));
       document.getElementById('loginOverlay').classList.add('hidden');
-      document.getElementById('userFullName').textContent = currentUser.full_name;
-      document.getElementById('userRole').textContent = currentUser.role.toUpperCase();
+      document.getElementById('userFullName').textContent = currentUser.full_name || 'System Administrator';
+      document.getElementById('userRole').textContent = (currentUser.role || 'Admin').toUpperCase();
       loadDashboardData();
     } else {
       errDiv.textContent = data.message || 'Invalid email or password';
       errDiv.classList.remove('hidden');
     }
   } catch (err) {
-    // Offline fallback for demo
-    if (email === 'admin@itinventory.com' && password === 'admin123') {
-      currentUser = { user_id: 'USR-ADMIN-01', full_name: 'Chief IT Administrator', role: 'admin', email };
-      localStorage.setItem('it_inventory_admin_user', JSON.stringify(currentUser));
-      document.getElementById('loginOverlay').classList.add('hidden');
-      loadDashboardData();
-    } else {
-      errDiv.textContent = 'Connection error: ' + err.message;
-      errDiv.classList.remove('hidden');
-    }
+    errDiv.textContent = 'Connection error: ' + err.message;
+    errDiv.classList.remove('hidden');
   }
 }
 
@@ -230,6 +223,87 @@ function handleLogout() {
   localStorage.removeItem('it_inventory_admin_user');
   currentUser = null;
   showLoginModal();
+}
+
+// =============================================================================
+// ACCOUNT SETTINGS & PASSWORD CHANGE
+// =============================================================================
+
+function openChangePasswordModal() {
+  const modal = document.getElementById('changePasswordModal');
+  if (!modal) return;
+  document.getElementById('changePasswordForm').reset();
+  const errDiv = document.getElementById('pwdError');
+  const succDiv = document.getElementById('pwdSuccess');
+  if (errDiv) errDiv.classList.add('hidden');
+  if (succDiv) succDiv.classList.add('hidden');
+
+  const emailEl = document.getElementById('settingsUserEmail');
+  if (emailEl && currentUser) {
+    emailEl.textContent = currentUser.email || 'admin@itinventory.ph';
+  }
+  modal.classList.remove('hidden');
+}
+
+async function handleChangePassword(e) {
+  e.preventDefault();
+  const currentPassword = document.getElementById('pwdCurrent').value;
+  const newPassword = document.getElementById('pwdNew').value;
+  const confirmPassword = document.getElementById('pwdConfirm').value;
+  const errDiv = document.getElementById('pwdError');
+  const succDiv = document.getElementById('pwdSuccess');
+  const submitBtn = document.getElementById('btnSubmitPassword');
+
+  errDiv.classList.add('hidden');
+  succDiv.classList.add('hidden');
+
+  if (newPassword !== confirmPassword) {
+    errDiv.textContent = 'New password and confirmation do not match.';
+    errDiv.classList.remove('hidden');
+    return;
+  }
+
+  if (newPassword.length < 6) {
+    errDiv.textContent = 'New password must be at least 6 characters long.';
+    errDiv.classList.remove('hidden');
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Updating...';
+
+  try {
+    const res = await fetch('/api/auth/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user_id: currentUser ? currentUser.user_id : null,
+        email: currentUser ? currentUser.email : 'admin@itinventory.ph',
+        current_password: currentPassword,
+        new_password: newPassword
+      })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      succDiv.textContent = 'Password successfully updated in TiDB Cloud!';
+      succDiv.classList.remove('hidden');
+      document.getElementById('changePasswordForm').reset();
+      showToast('Password updated successfully');
+      setTimeout(() => {
+        closeModal('changePasswordModal');
+      }, 1500);
+    } else {
+      errDiv.textContent = data.message || 'Failed to update password.';
+      errDiv.classList.remove('hidden');
+    }
+  } catch (err) {
+    errDiv.textContent = 'Network error: ' + err.message;
+    errDiv.classList.remove('hidden');
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save New Password';
+  }
 }
 
 // =============================================================================

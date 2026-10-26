@@ -83,13 +83,15 @@ async function initTiDBSchema() {
   `);
   console.log('[TiDB] Table `scan_logs` checked/created.');
 
-  // Seed default admin and scanner users
+  // Seed default official admin and scanner users
   await connection.query(`
     INSERT INTO users (user_id, full_name, email, password, role)
     VALUES 
-      ('usr_admin_01', 'Admin Staff', 'admin@itinventory.local', 'admin123', 'admin'),
+      ('usr_admin_official', 'System Administrator', 'admin@itinventory.ph', 'Admin@IT2026!', 'admin'),
       ('usr_scanner_01', 'John Scanner', 'scanner@itinventory.local', 'scanner123', 'scanner')
-    ON DUPLICATE KEY UPDATE full_name = VALUES(full_name);
+    ON DUPLICATE KEY UPDATE 
+      full_name = VALUES(full_name),
+      password = VALUES(password);
   `);
   console.log('[TiDB] Default users seeded.');
 

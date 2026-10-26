@@ -191,6 +191,50 @@ const server = http.createServer(async (req, res) => {
   }
 
   // ==========================================
+  // API: CHANGE PASSWORD (ACCOUNT SETTINGS)
+  // ==========================================
+  if (pathname === '/api/auth/change-password' && method === 'POST') {
+    try {
+      const { user_id, email, current_password, new_password } = await parseBody(req);
+      if (!current_password || !new_password) {
+        return sendJson(res, 400, { success: false, message: 'Current password and new password are required' });
+      }
+
+      if (new_password.length < 6) {
+        return sendJson(res, 400, { success: false, message: 'New password must be at least 6 characters' });
+      }
+
+      let userQuery = 'SELECT * FROM users WHERE ';
+      const params = [];
+      if (user_id) {
+        userQuery += 'user_id = ?';
+        params.push(user_id);
+      } else if (email) {
+        userQuery += 'LOWER(email) = LOWER(?)';
+        params.push(email);
+      } else {
+        return sendJson(res, 400, { success: false, message: 'User identification required' });
+      }
+
+      const [rows] = await dbPool.query(userQuery, params);
+      if (rows.length === 0) {
+        return sendJson(res, 404, { success: false, message: 'User account not found' });
+      }
+
+      const user = rows[0];
+      if (user.password !== current_password) {
+        return sendJson(res, 403, { success: false, message: 'Current password is incorrect' });
+      }
+
+      await dbPool.query('UPDATE users SET password = ? WHERE user_id = ?;', [new_password, user.user_id]);
+      console.log(`[AUTH] Password changed successfully for user: ${user.email}`);
+      return sendJson(res, 200, { success: true, message: 'Password updated successfully' });
+    } catch (e) {
+      return sendJson(res, 500, { success: false, message: 'Database error: ' + e.message });
+    }
+  }
+
+  // ==========================================
   // API: DASHBOARD SUMMARY STATS
   // ==========================================
   if (pathname === '/api/stats' && method === 'GET') {

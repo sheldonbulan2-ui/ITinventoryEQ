@@ -71,12 +71,12 @@
 
       <form id="loginForm" class="space-y-4" onsubmit="handleLogin(event)">
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">Email Address</label>
+          <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">Official Admin Email</label>
           <div class="relative">
             <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none text-xs">
               <i class="fa-solid fa-envelope"></i>
             </span>
-            <input type="email" id="loginEmail" required value="admin@itinventory.com" 
+            <input type="email" id="loginEmail" required placeholder="admin@itinventory.ph" 
               class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1E40AF] text-xs font-medium bg-slate-50/50">
           </div>
         </div>
@@ -87,7 +87,7 @@
             <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none text-xs">
               <i class="fa-solid fa-lock"></i>
             </span>
-            <input type="password" id="loginPassword" required value="admin123" 
+            <input type="password" id="loginPassword" required placeholder="••••••••" 
               class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1E40AF] text-xs font-medium bg-slate-50/50">
           </div>
         </div>
@@ -98,10 +98,6 @@
           class="w-full bg-[#1E40AF] hover:bg-[#1E3A8A] text-white text-xs font-bold py-3 rounded-xl shadow-md transition duration-150 flex items-center justify-center gap-2">
           <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Console
         </button>
-
-        <div class="pt-2 text-center text-[11px] text-slate-400">
-          Default Admin: <span class="text-slate-700 font-mono font-semibold">admin@itinventory.local</span> / <span class="text-slate-700 font-mono font-semibold">admin123</span>
-        </div>
       </form>
 
       <!-- Prominent Mobile Scanner APK Download Card on Landing / Login -->
@@ -139,9 +135,8 @@
         <div class="flex items-center gap-3 overflow-hidden">
           <img src="assets/logo.png" alt="Logo" class="w-9 h-9 rounded-xl object-contain shadow-sm border border-slate-200/80 p-0.5 bg-slate-50 flex-shrink-0">
           <div class="truncate">
-            <div class="font-extrabold text-sm text-[#0F172A] tracking-tight flex items-center gap-1.5 leading-none">
+            <div class="font-extrabold text-sm text-[#0F172A] tracking-tight leading-none">
               IT Inventory
-              <span class="bg-[#1E40AF] text-white text-[9px] font-bold px-1.5 py-0.5 rounded tracking-wide">PRO</span>
             </div>
             <div class="text-[10px] text-slate-400 font-medium mt-1">Enterprise Console</div>
           </div>
@@ -165,13 +160,11 @@
           <span id="sidebarInventoryBadge" class="ml-auto text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">0</span>
         </a>
 
-        <!-- Live Scan Logs -->
+        <!-- Scan Feed -->
         <a onclick="switchView('logs')" id="nav-logs" class="nav-link">
           <i class="fa-solid fa-bolt nav-icon text-sm w-5 text-center"></i>
-          <span>Live Scan Feed</span>
-          <span class="ml-auto flex items-center gap-1 text-[10px] font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">
-            <span class="live-ping"></span> Live
-          </span>
+          <span>Scan Feed</span>
+          <span id="sidebarScanBadge" class="ml-auto text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">Feed</span>
         </a>
 
         <!-- QR Tag Generator Studio -->
@@ -221,22 +214,19 @@
       </nav>
     </div>
 
-    <!-- Sidebar Bottom: Live Sync Status Card & User Profile -->
+    <!-- Sidebar Bottom: Account Settings & User Profile -->
     <div class="p-3 space-y-2 border-t border-slate-200 bg-slate-50/50">
       
-      <!-- Live Sync Status Box -->
-      <div class="p-3 bg-white rounded-xl border border-slate-200/80 shadow-sm text-xs">
-        <div class="flex items-center justify-between mb-1.5">
-          <div class="flex items-center gap-1.5">
-            <span class="live-ping"></span>
-            <span class="font-bold text-slate-800 text-[11px]" id="sidebarSyncTitle">Live Sync Active</span>
-          </div>
-          <button onclick="toggleAudioChime()" id="btnSoundToggle" title="Toggle audio chime on scan" 
-            class="text-slate-400 hover:text-[#0EA5E9] text-xs">
-            <i class="fa-solid fa-volume-high"></i>
-          </button>
-        </div>
-        <div class="text-[10px] text-slate-400 truncate" id="sidebarHostInfo">http://localhost:5000</div>
+      <!-- Account Settings & Change Password Button -->
+      <div class="p-2.5 bg-white rounded-xl border border-slate-200/80 shadow-xs flex items-center justify-between text-xs">
+        <button onclick="openChangePasswordModal()" class="flex items-center gap-2 text-slate-700 hover:text-[#1E40AF] font-semibold transition text-left">
+          <i class="fa-solid fa-key text-[#1E40AF]"></i>
+          <span>Change Password</span>
+        </button>
+        <button onclick="toggleAudioChime()" id="btnSoundToggle" title="Toggle audio chime on scan" 
+          class="text-slate-400 hover:text-[#0EA5E9] text-xs p-1">
+          <i class="fa-solid fa-volume-high"></i>
+        </button>
       </div>
 
       <!-- Staff Account Info -->
@@ -246,13 +236,18 @@
             AD
           </div>
           <div class="min-w-0">
-            <div class="font-bold text-xs text-slate-800 truncate" id="userFullName">Administrator</div>
+            <div class="font-bold text-xs text-slate-800 truncate" id="userFullName">System Administrator</div>
             <div class="text-[10px] text-slate-400 truncate" id="userRole">SUPER ADMIN</div>
           </div>
         </div>
-        <button onclick="handleLogout()" title="Sign Out" class="text-slate-400 hover:text-red-600 p-1.5 transition">
-          <i class="fa-solid fa-arrow-right-from-bracket"></i>
-        </button>
+        <div class="flex items-center gap-1">
+          <button onclick="openChangePasswordModal()" title="Account Settings" class="text-slate-400 hover:text-[#1E40AF] p-1.5 transition">
+            <i class="fa-solid fa-gear"></i>
+          </button>
+          <button onclick="handleLogout()" title="Sign Out" class="text-slate-400 hover:text-red-600 p-1.5 transition">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          </button>
+        </div>
       </div>
 
     </div>
@@ -425,16 +420,16 @@
         <!-- 2. SPLIT SECTION: LIVE AUDIT FEED (LEFT) + CATEGORY DISTRIBUTION (RIGHT) -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
-          <!-- Left: Real-Time Live Scan Stream (7 cols) -->
+          <!-- Left: Scan Feed (7 cols) -->
           <div class="lg:col-span-8 modern-card overflow-hidden flex flex-col">
             <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
               <div class="flex items-center gap-2.5">
-                <span class="live-ping"></span>
-                <h3 class="text-xs font-bold text-[#0F172A] tracking-wider uppercase">Live Mobile Audit Stream</h3>
+                <i class="fa-solid fa-list-check text-[#1E40AF] text-sm"></i>
+                <h3 class="text-xs font-bold text-[#0F172A] tracking-wider uppercase">Scan Feed</h3>
                 <span id="dashLiveCountBadge" class="text-[10px] font-bold bg-slate-200/80 text-slate-700 px-2 py-0.5 rounded-full">0 scans</span>
               </div>
               <div class="flex items-center gap-3">
-                <span class="text-[11px] text-slate-400 hidden sm:inline">Instant sync from Android</span>
+                <span class="text-[11px] text-slate-400 hidden sm:inline">Audit log stream</span>
                 <button onclick="refreshData()" class="text-xs text-slate-500 hover:text-[#1E40AF] p-1">
                   <i class="fa-solid fa-arrows-rotate"></i>
                 </button>
@@ -457,7 +452,7 @@
                 <tbody id="dashLiveScanTableBody" class="divide-y divide-slate-100">
                   <tr>
                     <td colspan="6" class="py-12 text-center text-slate-400">
-                      <i class="fa-solid fa-spinner fa-spin mr-2"></i> Connecting to live audit stream...
+                      <i class="fa-solid fa-spinner fa-spin mr-2"></i> Connecting to scan feed...
                     </td>
                   </tr>
                 </tbody>
@@ -465,9 +460,9 @@
             </div>
 
             <div class="p-3 bg-slate-50/60 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
-              <span class="text-[11px] text-slate-400">Pushed automatically via Server-Sent Events</span>
+              <span class="text-[11px] text-slate-400">Synchronized audit stream</span>
               <a onclick="switchView('logs')" class="text-xs text-[#1E40AF] font-bold hover:underline cursor-pointer flex items-center gap-1">
-                View Complete Audit History <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                View Complete Scan Feed <i class="fa-solid fa-arrow-right text-[10px]"></i>
               </a>
             </div>
           </div>
@@ -645,7 +640,7 @@
       </div>
 
       <!-- ===================================================================== -->
-      <!-- VIEW 3: LIVE AUDIT LOGS FULL TRAIL -->
+      <!-- VIEW 3: SCAN FEED AUDIT LOGS -->
       <!-- ===================================================================== -->
       <div id="view-logs" class="view-panel hidden space-y-4">
         
@@ -653,8 +648,8 @@
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <div class="flex items-center gap-2">
-                <span class="live-ping"></span>
-                <h2 class="text-base font-bold text-[#0F172A] tracking-tight">Full System Audit Trail</h2>
+                <i class="fa-solid fa-list-check text-[#1E40AF]"></i>
+                <h2 class="text-base font-bold text-[#0F172A] tracking-tight">Scan Feed Logs</h2>
               </div>
               <p class="text-xs text-slate-500 mt-0.5">Chronological record of every scan, check-out, and status mutation</p>
             </div>
@@ -1091,6 +1086,82 @@
           <i class="fa-solid fa-print"></i> Print QR Sticker
         </button>
       </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: ACCOUNT SETTINGS & CHANGE PASSWORD -->
+  <!-- ========================================================================= -->
+  <div id="changePasswordModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full border border-slate-100">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 mb-4">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-blue-50 text-[#1E40AF] flex items-center justify-center text-sm font-bold">
+            <i class="fa-solid fa-key"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-[#0F172A]">Account Settings</h3>
+            <p class="text-[11px] text-slate-500">Update official admin account password</p>
+          </div>
+        </div>
+        <button onclick="closeModal('changePasswordModal')" class="text-slate-400 hover:text-slate-600 p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="changePasswordForm" class="space-y-4" onsubmit="handleChangePassword(event)">
+        <!-- Current User Display -->
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center justify-between text-xs">
+          <div>
+            <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Signed in as</div>
+            <div class="font-bold text-slate-800" id="settingsUserEmail">admin@itinventory.ph</div>
+          </div>
+          <span class="text-[10px] font-bold bg-[#1E40AF] text-white px-2 py-0.5 rounded-full">ADMIN</span>
+        </div>
+
+        <!-- Current Password -->
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+            Current Password <span class="text-red-500">*</span>
+          </label>
+          <input type="password" id="pwdCurrent" required placeholder="Enter your current password"
+            class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[#1E40AF]">
+        </div>
+
+        <!-- New Password -->
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+            New Password <span class="text-red-500">*</span>
+          </label>
+          <input type="password" id="pwdNew" required minlength="6" placeholder="At least 6 characters"
+            class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[#1E40AF]">
+        </div>
+
+        <!-- Confirm New Password -->
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
+            Confirm New Password <span class="text-red-500">*</span>
+          </label>
+          <input type="password" id="pwdConfirm" required minlength="6" placeholder="Re-type new password"
+            class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[#1E40AF]">
+        </div>
+
+        <div id="pwdError" class="text-xs text-red-600 hidden font-semibold bg-red-50 p-2.5 rounded-lg border border-red-200"></div>
+        <div id="pwdSuccess" class="text-xs text-emerald-700 hidden font-semibold bg-emerald-50 p-2.5 rounded-lg border border-emerald-200"></div>
+
+        <div class="pt-3 border-t border-slate-200 flex items-center justify-end gap-2">
+          <button type="button" onclick="closeModal('changePasswordModal')" 
+            class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold text-xs">
+            Cancel
+          </button>
+          <button type="submit" id="btnSubmitPassword"
+            class="bg-[#1E40AF] hover:bg-[#1E3A8A] text-white px-5 py-2 rounded-xl shadow-md font-bold text-xs flex items-center gap-2">
+            <i class="fa-solid fa-floppy-disk"></i> Save New Password
+          </button>
+        </div>
+      </form>
 
     </div>
   </div>
