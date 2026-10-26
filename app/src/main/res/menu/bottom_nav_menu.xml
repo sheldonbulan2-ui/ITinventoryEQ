@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_nav_home"
+        android:title="Home" />
+    <item
+        android:id="@+id/nav_scanner"
+        android:icon="@drawable/ic_nav_scan"
+        android:title="Camera" />
+    <item
+        android:id="@+id/nav_manual"
+        android:icon="@drawable/ic_nav_manual"
+        android:title="Manual" />
+    <item
+        android:id="@+id/nav_queue"
+        android:icon="@drawable/ic_nav_queue"
+        android:title="Offline Sync" />
+</menu>

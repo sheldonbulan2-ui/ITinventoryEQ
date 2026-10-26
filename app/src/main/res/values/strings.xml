@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">IT Inventory</string>
+    <string name="app_tagline">Real-Time Equipment &amp; QR Scanner</string>
+    
+    <!-- Login Screen -->
+    <string name="sign_in_title">Staff Scanner Portal</string>
+    <string name="email_hint">Staff Email</string>
+    <string name="password_hint">Password</string>
+    <string name="btn_login">Sign In</string>
+    <string name="btn_fill_demo">Fill Scanner Demo Account</string>
+    
+    <!-- Dashboard Screen -->
+    <string name="welcome_greeting">Hello, %1$s</string>
+    <string name="role_scanner">IT Field Scanner</string>
+    <string name="label_scanned_today">Scanned Today</string>
+    <string name="btn_scan_qr_barcode">SCAN QR / BARCODE</string>
+    <string name="recent_scans_title">Recent Live Scans</string>
+    <string name="empty_scans">No recent scans yet. Tap the scan button to audit an IT asset.</string>
+    
+    <!-- Scanner & Dialogs -->
+    <string name="scanner_instruction">Align QR code or Barcode inside the viewfinder</string>
+    <string name="toggle_flash">Toggle Flashlight</string>
+    <string name="item_found_title">Equipment Found</string>
+    <string name="register_new_title">Register New IT Equipment</string>
+    <string name="label_asset_tag">Asset Tag</string>
+    <string name="label_item_name">Item Name / Model</string>
+    <string name="label_category">Category</string>
+    <string name="label_serial">Serial Number</string>
+    <string name="label_status">Status</string>
+    <string name="label_action">Action Taken</string>
+    <string name="label_assigned">Assigned To</string>
+    <string name="label_location">Location</string>
+    <string name="label_remarks">Remarks / Audit Notes</string>
+    <string name="btn_save_sync">Save &amp; Sync to Web</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="server_settings_title">Backend Server Settings</string>
+    <string name="server_url_hint">http://10.0.2.2:5000</string>
+</resources>

@@ -1,0 +1,626 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mainCoordinator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- Unified Top Header Bar (#1E40AF) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/primary"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="16dp">
+
+            <!-- Top Row: Logo, Title, Logout -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/imgHeaderLogo"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:src="@drawable/logo"
+                        android:background="@drawable/bg_badge_assigned"
+                        android:backgroundTint="#20FFFFFF"
+                        android:padding="2dp"
+                        android:contentDescription="IT Logo" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginStart="10dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/app_name"
+                            android:textSize="17sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/white" />
+
+                        <TextView
+                            android:id="@+id/tvStaffRole"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="FIELD SCANNER &amp; AUDIT"
+                            android:textSize="9sp"
+                            android:textStyle="bold"
+                            android:textColor="#93C5FD"
+                            android:letterSpacing="0.05" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/btnMainSettings"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:padding="7dp"
+                        android:src="@android:drawable/ic_menu_preferences"
+                        app:tint="@color/white"
+                        android:contentDescription="Settings" />
+
+                    <ImageView
+                        android:id="@+id/btnMainLogout"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:padding="7dp"
+                        android:src="@android:drawable/ic_lock_power_off"
+                        app:tint="@color/white"
+                        android:contentDescription="Logout"
+                        android:layout_marginStart="4dp" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- Connectivity & Offline Banner -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="#15FFFFFF"
+                android:padding="10dp"
+                android:clipToOutline="true">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvStaffGreeting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Welcome, Staff"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/tvLiveSyncStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="● Online &amp; Synchronized"
+                        android:textSize="11sp"
+                        android:textColor="#38BDF8"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+                <!-- Scanned Today KPI Badge -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="#30000000"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/tvScannedTodayCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TODAY"
+                        android:textSize="8sp"
+                        android:textStyle="bold"
+                        android:textColor="#BFDBFE" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Middle Body / Tab Content Switcher -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <!-- ============================================================= -->
+            <!-- TAB 1: HOME & QUICK SCAN (Default) -->
+            <!-- ============================================================= -->
+            <LinearLayout
+                android:id="@+id/layoutHomeTab"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <!-- Prominent Camera Action Card (12dp corners) -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardScanAction"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginBottom="10dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    app:strokeColor="#BAE6FD"
+                    app:strokeWidth="1.5dp"
+                    app:cardBackgroundColor="@color/card_surface">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnStartScan"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:text="@string/btn_scan_qr_barcode"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/white"
+                            app:backgroundTint="@color/accent"
+                            app:cornerRadius="12dp"
+                            app:icon="@drawable/ic_nav_scan"
+                            app:iconGravity="textStart"
+                            app:iconPadding="10dp"
+                            app:iconTint="@color/white" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnQuickManualInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp"
+                            android:text="Type Asset Tag Manually"
+                            android:textSize="12sp"
+                            android:textColor="@color/primary"
+                            app:strokeColor="@color/primary"
+                            app:strokeWidth="1dp"
+                            app:backgroundTint="@color/card_surface"
+                            app:cornerRadius="12dp"
+                            android:layout_marginTop="8dp"
+                            style="@style/Widget.Material3.Button.OutlinedButton" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Section Header -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/recent_scans_title"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary" />
+
+                    <TextView
+                        android:id="@+id/tvRefreshScans"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pull to refresh"
+                        android:textSize="11sp"
+                        android:textColor="@color/accent" />
+                </LinearLayout>
+
+                <!-- Swipe Refresh & Live Scans Feed -->
+                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                    android:id="@+id/swipeRefreshScans"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvRecentScans"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:clipToPadding="false"
+                            android:paddingStart="16dp"
+                            android:paddingEnd="16dp"
+                            android:paddingBottom="16dp" />
+
+                        <LinearLayout
+                            android:id="@+id/layoutEmptyScans"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="32dp"
+                            android:visibility="gone">
+
+                            <ImageView
+                                android:layout_width="54dp"
+                                android:layout_height="54dp"
+                                android:src="@drawable/logo"
+                                android:alpha="0.25"
+                                android:contentDescription="Empty" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/empty_scans"
+                                android:textSize="12sp"
+                                android:textColor="@color/text_secondary"
+                                android:gravity="center"
+                                android:layout_marginTop="10dp" />
+                        </LinearLayout>
+
+                    </FrameLayout>
+                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            </LinearLayout>
+
+            <!-- ============================================================= -->
+            <!-- TAB 2: MANUAL ASSET TAG ENTRY -->
+            <!-- ============================================================= -->
+            <ScrollView
+                android:id="@+id/layoutManualTab"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="2dp"
+                        app:strokeColor="@color/border_light"
+                        app:strokeWidth="1dp"
+                        app:cardBackgroundColor="@color/card_surface">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="20dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Manual Tag Entry"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/text_primary" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Audit or register equipment even if camera fails or barcode is damaged."
+                                android:textSize="12sp"
+                                android:textColor="@color/text_secondary"
+                                android:layout_marginTop="2dp"
+                                android:layout_marginBottom="16dp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="ENTER ASSET TAG OR SERIAL NUMBER"
+                                android:textSize="10sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/text_secondary"
+                                android:letterSpacing="0.05"
+                                android:layout_marginBottom="4dp" />
+
+                            <EditText
+                                android:id="@+id/etManualInputTag"
+                                android:layout_width="match_parent"
+                                android:layout_height="50dp"
+                                android:background="@drawable/bg_edit_text"
+                                android:hint="e.g. IT-LAP-001 or DL5420-9941X"
+                                android:inputType="textCapCharacters"
+                                android:fontFamily="monospace"
+                                android:textStyle="bold"
+                                android:textColor="@color/primary"
+                                android:textSize="15sp"
+                                android:layout_marginBottom="16dp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnLookupManualTag"
+                                android:layout_width="match_parent"
+                                android:layout_height="50dp"
+                                android:text="Lookup &amp; Audit Equipment"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/white"
+                                app:backgroundTint="@color/primary"
+                                app:cornerRadius="12dp"
+                                app:icon="@drawable/ic_nav_manual"
+                                app:iconGravity="textStart"
+                                app:iconPadding="8dp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Tip: If the item exists in the local database or server, you can change its status or re-assign. If it is new, you can register it on the spot."
+                                android:textSize="11sp"
+                                android:textColor="@color/text_secondary"
+                                android:layout_marginTop="14dp"
+                                android:lineSpacingExtra="2dp" />
+
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Quick Sample Tags Buttons -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="QUICK TEST TAGS"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="8dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnTagSample1"
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="1"
+                            android:text="IT-LAP-001"
+                            android:textSize="11sp"
+                            android:fontFamily="monospace"
+                            android:textColor="@color/primary"
+                            app:strokeColor="@color/border_light"
+                            app:strokeWidth="1dp"
+                            app:backgroundTint="@color/card_surface"
+                            app:cornerRadius="8dp"
+                            android:layout_marginEnd="6dp"
+                            style="@style/Widget.Material3.Button.OutlinedButton" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnTagSample2"
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="1"
+                            android:text="IT-MON-001"
+                            android:textSize="11sp"
+                            android:fontFamily="monospace"
+                            android:textColor="@color/primary"
+                            app:strokeColor="@color/border_light"
+                            app:strokeWidth="1dp"
+                            app:backgroundTint="@color/card_surface"
+                            app:cornerRadius="8dp"
+                            android:layout_marginStart="6dp"
+                            style="@style/Widget.Material3.Button.OutlinedButton" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </ScrollView>
+
+            <!-- ============================================================= -->
+            <!-- TAB 3: OFFLINE SYNC QUEUE -->
+            <!-- ============================================================= -->
+            <LinearLayout
+                android:id="@+id/layoutQueueTab"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    app:strokeColor="@color/border_light"
+                    app:strokeWidth="1dp"
+                    app:cardBackgroundColor="@color/card_surface"
+                    android:layout_marginBottom="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Pending Offline Queue"
+                                android:textSize="15sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/text_primary" />
+
+                            <TextView
+                                android:id="@+id/tvQueueCountBadge"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:text="0 ITEMS"
+                                android:background="@drawable/bg_badge_maintenance"
+                                android:textSize="10sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/status_maintenance" />
+                        </RelativeLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Scans conducted without network access are queued safely in your phone's SQLite database."
+                            android:textSize="11sp"
+                            android:textColor="@color/text_secondary"
+                            android:layout_marginBottom="14dp" />
+
+                        <!-- Sync All Now Button -->
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSyncQueueNow"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:text="Sync All Pending Now"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/white"
+                            app:backgroundTint="@color/primary"
+                            app:cornerRadius="12dp"
+                            app:icon="@drawable/ic_nav_queue"
+                            app:iconGravity="textStart"
+                            app:iconPadding="8dp" />
+
+                        <ProgressBar
+                            android:id="@+id/queueSyncProgressBar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="10dp"
+                            android:indeterminateTint="@color/primary"
+                            android:visibility="gone" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Queue Items List -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="QUEUED MUTATIONS"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginBottom="8dp" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvOfflineQueue"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clipToPadding="false"
+                        android:paddingBottom="12dp" />
+
+                    <LinearLayout
+                        android:id="@+id/layoutEmptyQueue"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="24dp">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/ic_nav_queue"
+                            app:tint="@color/status_available"
+                            android:contentDescription="Empty" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="All scans are synced with the database!"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/status_available"
+                            android:layout_marginTop="8dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Queue is clean. New offline scans will appear here."
+                            android:textSize="11sp"
+                            android:textColor="@color/text_secondary"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                </FrameLayout>
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <!-- Modern Bottom Navigation Bar (#1E40AF active item tint) -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/card_surface"
+            app:elevation="8dp"
+            app:menu="@menu/bottom_nav_menu"
+            app:itemIconTint="@color/primary"
+            app:itemTextColor="@color/primary"
+            app:labelVisibilityMode="labeled" />
+
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

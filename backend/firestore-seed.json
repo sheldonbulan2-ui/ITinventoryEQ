@@ -1,0 +1,175 @@
+{
+  "equipment_items": [
+    {
+      "item_id": "EQ-001",
+      "asset_tag": "IT-LAP-001",
+      "item_name": "Dell Latitude 5420",
+      "category": "Laptop",
+      "serial_number": "DL5420-9941X",
+      "status": "Assigned",
+      "assigned_to": "John Doe (Engineering)",
+      "location": "Floor 3 - Desk 304",
+      "last_scanned_at": "2026-10-27T04:30:00.000Z",
+      "last_scanned_by": "Alex Mercer (Field Tech)"
+    },
+    {
+      "item_id": "EQ-002",
+      "asset_tag": "IT-LAP-002",
+      "item_name": "MacBook Pro 16\" M2",
+      "category": "Laptop",
+      "serial_number": "C02G99AAQ05D",
+      "status": "Available",
+      "assigned_to": "",
+      "location": "Room 302 - IT Vault",
+      "last_scanned_at": "2026-10-26T14:15:00.000Z",
+      "last_scanned_by": "Chief IT Administrator"
+    },
+    {
+      "item_id": "EQ-003",
+      "asset_tag": "IT-DSK-001",
+      "item_name": "HP EliteDesk 800 G6",
+      "category": "Desktop",
+      "serial_number": "HPE800-8812A",
+      "status": "Assigned",
+      "assigned_to": "Finance Department",
+      "location": "Floor 2 - Finance Dept",
+      "last_scanned_at": "2026-10-27T01:10:00.000Z",
+      "last_scanned_by": "Alex Mercer (Field Tech)"
+    },
+    {
+      "item_id": "EQ-004",
+      "asset_tag": "IT-MON-001",
+      "item_name": "Dell UltraSharp U2723QE 4K",
+      "category": "Monitor",
+      "serial_number": "CN-0K75P8-74261",
+      "status": "Available",
+      "assigned_to": "",
+      "location": "Room 302 - IT Vault",
+      "last_scanned_at": "2026-10-25T11:00:00.000Z",
+      "last_scanned_by": "Samantha Vance (Helpdesk)"
+    },
+    {
+      "item_id": "EQ-005",
+      "asset_tag": "IT-NET-001",
+      "item_name": "Cisco Catalyst 9300 48-Port",
+      "category": "Network",
+      "serial_number": "FCW2215L0K1",
+      "status": "Available",
+      "assigned_to": "",
+      "location": "Server Room Alpha - Rack B",
+      "last_scanned_at": "2026-10-27T02:40:00.000Z",
+      "last_scanned_by": "Chief IT Administrator"
+    },
+    {
+      "item_id": "EQ-006",
+      "asset_tag": "IT-LAP-003",
+      "item_name": "Lenovo ThinkPad X1 Carbon Gen 10",
+      "category": "Laptop",
+      "serial_number": "PF-3B902K",
+      "status": "Maintenance",
+      "assigned_to": "Sarah Jenkins (Legal)",
+      "location": "IT Repair Bench #2",
+      "last_scanned_at": "2026-10-27T06:05:00.000Z",
+      "last_scanned_by": "Samantha Vance (Helpdesk)"
+    },
+    {
+      "item_id": "EQ-007",
+      "asset_tag": "IT-PER-001",
+      "item_name": "Logitech MX Master 3S",
+      "category": "Peripheral",
+      "serial_number": "LZ2340M1",
+      "status": "Assigned",
+      "assigned_to": "Dev Team Lead",
+      "location": "Floor 4 - Lab 1",
+      "last_scanned_at": "2026-10-27T00:15:00.000Z",
+      "last_scanned_by": "Alex Mercer (Field Tech)"
+    },
+    {
+      "item_id": "EQ-008",
+      "asset_tag": "IT-MON-002",
+      "item_name": "LG 34WN80C-B Ultrawide",
+      "category": "Monitor",
+      "serial_number": "LG34-77189X",
+      "status": "Defective",
+      "assigned_to": "",
+      "location": "Defective IT Bin - Room 101",
+      "last_scanned_at": "2026-10-27T06:20:00.000Z",
+      "last_scanned_by": "Alex Mercer (Field Tech)"
+    }
+  ],
+  "scan_logs": [
+    {
+      "log_id": "LOG-1001",
+      "asset_tag": "IT-MON-002",
+      "item_name": "LG 34WN80C-B Ultrawide",
+      "action_type": "Report Defective",
+      "scanned_by": "Alex Mercer (Field Tech)",
+      "location": "Defective IT Bin - Room 101",
+      "remarks": "Severe flickering and vertical lines across screen.",
+      "timestamp": "2026-10-27T06:20:00.000Z"
+    },
+    {
+      "log_id": "LOG-1002",
+      "asset_tag": "IT-LAP-003",
+      "item_name": "Lenovo ThinkPad X1 Carbon Gen 10",
+      "action_type": "Report Defective",
+      "scanned_by": "Samantha Vance (Helpdesk)",
+      "location": "IT Repair Bench #2",
+      "remarks": "Keyboard row Q-P unresponsive. Sent to internal bench.",
+      "timestamp": "2026-10-27T06:05:00.000Z"
+    },
+    {
+      "log_id": "LOG-1003",
+      "asset_tag": "IT-LAP-001",
+      "item_name": "Dell Latitude 5420",
+      "action_type": "Audit Verify",
+      "scanned_by": "Alex Mercer (Field Tech)",
+      "location": "Floor 3 - Desk 304",
+      "remarks": "Routine quarterly inventory scan. Equipment verified in place.",
+      "timestamp": "2026-10-27T04:30:00.000Z"
+    },
+    {
+      "log_id": "LOG-1004",
+      "asset_tag": "IT-NET-001",
+      "item_name": "Cisco Catalyst 9300 48-Port",
+      "action_type": "Audit Verify",
+      "scanned_by": "Chief IT Administrator",
+      "location": "Server Room Alpha - Rack B",
+      "remarks": "Firmware patch verified. Ports 1-48 operational.",
+      "timestamp": "2026-10-27T02:40:00.000Z"
+    },
+    {
+      "log_id": "LOG-1005",
+      "asset_tag": "IT-DSK-001",
+      "item_name": "HP EliteDesk 800 G6",
+      "action_type": "Check-Out / Assign",
+      "scanned_by": "Alex Mercer (Field Tech)",
+      "location": "Floor 2 - Finance Dept",
+      "remarks": "Assigned to new accounting associate. Asset tagged & sealed.",
+      "timestamp": "2026-10-27T01:10:00.000Z"
+    }
+  ],
+  "users": [
+    {
+      "user_id": "USR-ADMIN-01",
+      "full_name": "Chief IT Administrator",
+      "email": "admin@itinventory.com",
+      "password": "admin123",
+      "role": "admin"
+    },
+    {
+      "user_id": "USR-SCAN-01",
+      "full_name": "Alex Mercer (Field Tech)",
+      "email": "scanner@itinventory.com",
+      "password": "scan123",
+      "role": "scanner"
+    },
+    {
+      "user_id": "USR-SCAN-02",
+      "full_name": "Samantha Vance (Helpdesk)",
+      "email": "svance@itinventory.com",
+      "password": "scan123",
+      "role": "scanner"
+    }
+  ]
+}

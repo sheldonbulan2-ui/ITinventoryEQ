@@ -1,0 +1,21 @@
+{
+  "name": "it-inventory-backend",
+  "version": "1.0.0",
+  "description": "Real-time backend API server and synchronization engine for IT Equipment Inventory System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "inventory",
+    "realtime",
+    "scanner",
+    "equipment"
+  ],
+  "author": "IT Systems Team",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^18.0.9",
+    "mysql2": "^3.24.6"
+  }
+}

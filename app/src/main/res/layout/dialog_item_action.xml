@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/card_surface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Dialog Header: Single Logo + Title -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/logo"
+                android:contentDescription="Logo" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvDialogTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/item_found_title"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary" />
+
+                <TextView
+                    android:id="@+id/tvDialogSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Matched registered IT equipment in database"
+                    android:textSize="11sp"
+                    android:textColor="@color/text_secondary" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Matched Equipment Details Box -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_asset_tag_pill"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp">
+
+                <TextView
+                    android:id="@+id/dialogAssetTag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="IT-LAP-001"
+                    android:textSize="13sp"
+                    android:fontFamily="monospace"
+                    android:textStyle="bold"
+                    android:textColor="@color/primary" />
+
+                <TextView
+                    android:id="@+id/dialogCurrentStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:text="AVAILABLE"
+                    android:background="@drawable/bg_badge_available"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/status_available" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/dialogItemName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Dell Latitude 5420"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary" />
+
+            <TextView
+                android:id="@+id/dialogSerial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="S/N: DL5420-9941X | Category: Laptop"
+                android:textSize="11sp"
+                android:textColor="@color/text_secondary"
+                android:layout_marginTop="2dp" />
+
+            <TextView
+                android:id="@+id/dialogAssigned"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Currently: Unassigned"
+                android:textSize="11sp"
+                android:textColor="@color/text_secondary"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <!-- Form Input 1: Scan Action / Status to update -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SELECT ACTION / NEW STATUS"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_secondary"
+            android:letterSpacing="0.05"
+            android:layout_marginBottom="4dp" />
+
+        <Spinner
+            android:id="@+id/spinnerActionType"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:background="@drawable/bg_edit_text"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Form Input 2: Assigned To (if check-out/assign) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ASSIGNED TO (EMPLOYEE / DEPT)"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_secondary"
+            android:letterSpacing="0.05"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/etDialogAssignedTo"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:background="@drawable/bg_edit_text"
+            android:hint="e.g. John Doe (Engineering)"
+            android:inputType="textPersonName"
+            android:textColor="@color/text_primary"
+            android:textColorHint="#94A3B8"
+            android:textSize="13sp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Form Input 3: Location -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="VERIFIED / NEW LOCATION"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_secondary"
+            android:letterSpacing="0.05"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/etDialogLocation"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:background="@drawable/bg_edit_text"
+            android:hint="e.g. Room 302 - IT Vault"
+            android:inputType="text"
+            android:textColor="@color/text_primary"
+            android:textColorHint="#94A3B8"
+            android:textSize="13sp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Form Input 4: Remarks -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="REMARKS / AUDIT NOTES"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_secondary"
+            android:letterSpacing="0.05"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/etDialogRemarks"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:gravity="top"
+            android:background="@drawable/bg_edit_text"
+            android:hint="Notes regarding physical condition or verification..."
+            android:inputType="textMultiLine"
+            android:textColor="@color/text_primary"
+            android:textColorHint="#94A3B8"
+            android:textSize="13sp"
+            android:layout_marginBottom="20dp" />
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDialogCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="@string/btn_cancel"
+                android:textColor="@color/text_secondary"
+                app:cornerRadius="12dp"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_marginEnd="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDialogSaveSync"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="@string/btn_save_sync"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                app:backgroundTint="@color/primary"
+                app:cornerRadius="12dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

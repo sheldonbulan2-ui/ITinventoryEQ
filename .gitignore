@@ -1,0 +1,21 @@
+# Android & Gradle
+*.iml
+.gradle/
+local.properties
+.idea/
+build/
+app/build/
+.externalNativeBuild
+.cxx
+captures/
+
+# Node.js & Dependencies
+node_modules/
+backend/node_modules/
+*.log
+.env
+backend/data-store.json
+
+# OS
+.DS_Store
+Thumbs.db

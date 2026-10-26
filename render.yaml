@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: it-inventory-system
+    env: node
+    plan: free
+    region: singapore
+    buildCommand: npm install
+    startCommand: node backend/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: TIDB_HOST
+        value: gateway01.ap-southeast-1.prod.aws.tidbcloud.com
+      - key: TIDB_PORT
+        value: 4000
+      - key: TIDB_USER
+        value: Hs83Gackekaey61.root
+      - key: TIDB_PASSWORD
+        value: WQLhO9SyMi1x8YPe
+      - key: TIDB_DATABASE
+        value: itinventory

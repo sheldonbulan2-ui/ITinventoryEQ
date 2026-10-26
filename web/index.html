@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IT Equipment Inventory - Modern Admin Console</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  
+  <!-- Tailwind CSS & Modern Web Fonts (Inter & JetBrains Mono) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- QRCode.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <!-- Design Tokens & Component Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#EFF6FF',
+              100: '#DBEAFE',
+              500: '#3B82F6',
+              600: '#2563EB',
+              700: '#1D4ED8',
+              800: '#1E40AF', // Primary Brand Color
+              900: '#1E3A8A',
+            },
+            accent: {
+              500: '#0EA5E9', // Sky Blue Accent
+              600: '#0284C7',
+            },
+            surface: {
+              bg: '#F8FAFC',
+              card: '#FFFFFF',
+              dark: '#0F172A',
+              muted: '#475569',
+            }
+          },
+          borderRadius: {
+            'xl': '12px',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#F8FAFC] text-[#0F172A] h-full flex font-['Inter'] antialiased">
+
+  <!-- ========================================================================= -->
+  <!-- 1. LOGIN OVERLAY (Shows if not authenticated) -->
+  <!-- ========================================================================= -->
+  <div id="loginOverlay" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-md hidden p-4">
+    <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full border border-slate-100 transform transition-all">
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 mx-auto mb-3 bg-blue-50 border border-blue-100 rounded-2xl p-2.5 flex items-center justify-center shadow-sm">
+          <img src="assets/logo.png" alt="IT Inventory" class="w-full h-full object-contain">
+        </div>
+        <h2 class="text-2xl font-bold text-[#0F172A] tracking-tight">IT Equipment Portal</h2>
+        <p class="text-xs text-[#475569] mt-1 font-medium">Enterprise Web Admin &amp; Real-Time Sync Console</p>
+      </div>
+
+      <form id="loginForm" class="space-y-4" onsubmit="handleLogin(event)">
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">Email Address</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none text-xs">
+              <i class="fa-solid fa-envelope"></i>
+            </span>
+            <input type="email" id="loginEmail" required value="admin@itinventory.com" 
+              class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1E40AF] text-xs font-medium bg-slate-50/50">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">Password</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none text-xs">
+              <i class="fa-solid fa-lock"></i>
+            </span>
+            <input type="password" id="loginPassword" required value="admin123" 
+              class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1E40AF] text-xs font-medium bg-slate-50/50">
+          </div>
+        </div>
+
+        <div id="loginError" class="text-xs text-red-600 hidden font-semibold bg-red-50 p-2.5 rounded-lg border border-red-200"></div>
+
+        <button type="submit" 
+          class="w-full bg-[#1E40AF] hover:bg-[#1E3A8A] text-white text-xs font-bold py-3 rounded-xl shadow-md transition duration-150 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Console
+        </button>
+
+        <div class="pt-2 text-center text-[11px] text-slate-400">
+          Default Admin: <span class="text-slate-700 font-mono font-semibold">admin@itinventory.com</span> / <span class="text-slate-700 font-mono font-semibold">admin123</span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 2. SIDEBAR NAVIGATION (Modern Enterprise Pro) -->
+  <!-- ========================================================================= -->
+  <aside id="mainSidebar" class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between z-30 sidebar-transition flex-shrink-0">
+    <div>
+      <!-- Sidebar Header & Single Brand Logo -->
+      <div class="h-16 px-5 border-b border-slate-200 flex items-center justify-between">
+        <div class="flex items-center gap-3 overflow-hidden">
+          <img src="assets/logo.png" alt="Logo" class="w-9 h-9 rounded-xl object-contain shadow-sm border border-slate-200/80 p-0.5 bg-slate-50 flex-shrink-0">
+          <div class="truncate">
+            <div class="font-extrabold text-sm text-[#0F172A] tracking-tight flex items-center gap-1.5 leading-none">
+              IT Inventory
+              <span class="bg-[#1E40AF] text-white text-[9px] font-bold px-1.5 py-0.5 rounded tracking-wide">PRO</span>
+            </div>
+            <div class="text-[10px] text-slate-400 font-medium mt-1">Enterprise Console</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav class="p-3 space-y-1">
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 pt-3 pb-1">Main Views</div>
+        
+        <!-- Dashboard -->
+        <a onclick="switchView('dashboard')" id="nav-dashboard" class="nav-link active">
+          <i class="fa-solid fa-chart-pie nav-icon text-sm w-5 text-center text-[#1E40AF]"></i>
+          <span>Dashboard Overview</span>
+        </a>
+
+        <!-- Equipment Inventory -->
+        <a onclick="switchView('inventory')" id="nav-inventory" class="nav-link">
+          <i class="fa-solid fa-boxes-stacked nav-icon text-sm w-5 text-center"></i>
+          <span>Equipment Catalog</span>
+          <span id="sidebarInventoryBadge" class="ml-auto text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">0</span>
+        </a>
+
+        <!-- Live Scan Logs -->
+        <a onclick="switchView('logs')" id="nav-logs" class="nav-link">
+          <i class="fa-solid fa-bolt nav-icon text-sm w-5 text-center"></i>
+          <span>Live Scan Feed</span>
+          <span class="ml-auto flex items-center gap-1 text-[10px] font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">
+            <span class="live-ping"></span> Live
+          </span>
+        </a>
+
+        <!-- QR Tag Generator Studio -->
+        <a onclick="switchView('qr-studio')" id="nav-qr-studio" class="nav-link">
+          <i class="fa-solid fa-qrcode nav-icon text-sm w-5 text-center"></i>
+          <span>QR Tag Studio</span>
+        </a>
+
+        <!-- Quick Status Filters Section -->
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 pt-5 pb-1">Quick Filter Catalog</div>
+        
+        <a onclick="filterByStatusQuick('Available')" class="nav-link text-xs py-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#16A34A] mr-1"></span>
+          <span>Available Assets</span>
+          <span id="quickCountAvailable" class="ml-auto text-[10px] text-slate-400 font-semibold">-</span>
+        </a>
+        <a onclick="filterByStatusQuick('Assigned')" class="nav-link text-xs py-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#2563EB] mr-1"></span>
+          <span>Assigned / In Use</span>
+          <span id="quickCountAssigned" class="ml-auto text-[10px] text-slate-400 font-semibold">-</span>
+        </a>
+        <a onclick="filterByStatusQuick('Maintenance')" class="nav-link text-xs py-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#D97706] mr-1"></span>
+          <span>Under Maintenance</span>
+          <span id="quickCountMaintenance" class="ml-auto text-[10px] text-slate-400 font-semibold">-</span>
+        </a>
+        <a onclick="filterByStatusQuick('Defective')" class="nav-link text-xs py-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#DC2626] mr-1"></span>
+          <span>Defective Items</span>
+          <span id="quickCountDefective" class="ml-auto text-[10px] text-slate-400 font-semibold">-</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Sidebar Bottom: Live Sync Status Card & User Profile -->
+    <div class="p-3 space-y-2 border-t border-slate-200 bg-slate-50/50">
+      
+      <!-- Live Sync Status Box -->
+      <div class="p-3 bg-white rounded-xl border border-slate-200/80 shadow-sm text-xs">
+        <div class="flex items-center justify-between mb-1.5">
+          <div class="flex items-center gap-1.5">
+            <span class="live-ping"></span>
+            <span class="font-bold text-slate-800 text-[11px]" id="sidebarSyncTitle">Live Sync Active</span>
+          </div>
+          <button onclick="toggleAudioChime()" id="btnSoundToggle" title="Toggle audio chime on scan" 
+            class="text-slate-400 hover:text-[#0EA5E9] text-xs">
+            <i class="fa-solid fa-volume-high"></i>
+          </button>
+        </div>
+        <div class="text-[10px] text-slate-400 truncate" id="sidebarHostInfo">http://localhost:5000</div>
+      </div>
+
+      <!-- Staff Account Info -->
+      <div class="flex items-center justify-between px-2 py-1.5">
+        <div class="flex items-center gap-2 min-w-0">
+          <div class="w-8 h-8 rounded-full bg-[#1E40AF] text-white flex items-center justify-center font-bold text-xs flex-shrink-0">
+            AD
+          </div>
+          <div class="min-w-0">
+            <div class="font-bold text-xs text-slate-800 truncate" id="userFullName">Administrator</div>
+            <div class="text-[10px] text-slate-400 truncate" id="userRole">SUPER ADMIN</div>
+          </div>
+        </div>
+        <button onclick="handleLogout()" title="Sign Out" class="text-slate-400 hover:text-red-600 p-1.5 transition">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </button>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- ========================================================================= -->
+  <!-- 3. MAIN WORKSPACE CONTENT AREA -->
+  <!-- ========================================================================= -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+
+    <!-- Top Navigation Header -->
+    <header class="h-16 bg-white border-b border-slate-200 px-4 sm:px-8 flex items-center justify-between sticky top-0 z-20 shadow-xs">
+      
+      <!-- Left: Mobile Toggle & Breadcrumb -->
+      <div class="flex items-center gap-4">
+        <button onclick="toggleSidebar()" class="lg:hidden text-slate-500 hover:text-slate-800 p-1">
+          <i class="fa-solid fa-bars text-lg"></i>
+        </button>
+        
+        <div class="flex items-center gap-2 text-xs text-slate-400">
+          <i class="fa-solid fa-house"></i>
+          <span>/</span>
+          <span class="font-bold text-slate-800 text-sm" id="viewHeaderTitle">Dashboard Overview</span>
+        </div>
+      </div>
+
+      <!-- Center / Search Shortcut -->
+      <div class="hidden md:flex items-center max-w-sm w-full mx-4">
+        <div class="relative w-full">
+          <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 pointer-events-none text-xs">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </span>
+          <input type="text" id="globalTopSearch" oninput="handleGlobalSearch(event)" 
+            placeholder="Search equipment, tag, serial, staff... (Ctrl+K)" 
+            class="w-full pl-9 pr-8 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#1E40AF] transition">
+          <span class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-[10px] text-slate-400 font-mono">⌘K</span>
+        </div>
+      </div>
+
+      <!-- Right: Action Buttons & Indicators -->
+      <div class="flex items-center gap-2.5">
+        
+        <!-- Quick Export CSV -->
+        <button onclick="exportToCsv()" title="Export Equipment to CSV" 
+          class="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 px-3 py-2 rounded-xl transition shadow-xs">
+          <i class="fa-solid fa-file-csv text-[#16A34A]"></i>
+          <span>Export CSV</span>
+        </button>
+
+        <!-- Add Equipment Primary Button -->
+        <button onclick="openAddModal()" 
+          class="bg-[#1E40AF] hover:bg-[#1E3A8A] text-white text-xs font-bold px-4 py-2 rounded-xl shadow-xs transition flex items-center gap-2">
+          <i class="fa-solid fa-plus"></i>
+          <span class="hidden sm:inline">New Equipment</span>
+        </button>
+
+        <!-- Live Scan Counter Pill -->
+        <div class="flex items-center gap-1.5 bg-blue-50 border border-blue-200/80 px-2.5 py-1.5 rounded-xl text-xs font-bold text-[#1E40AF]">
+          <i class="fa-solid fa-bolt text-[#0EA5E9]"></i>
+          <span id="topScanCount">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Sub-Content Body Container -->
+    <main class="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto space-y-6">
+
+      <!-- ===================================================================== -->
+      <!-- VIEW 1: DASHBOARD OVERVIEW -->
+      <!-- ===================================================================== -->
+      <div id="view-dashboard" class="view-panel space-y-6">
+
+        <!-- 1. KPI SUMMARY METRIC CARDS -->
+        <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          
+          <!-- Total Equipment -->
+          <div onclick="switchView('inventory')" class="modern-card p-4 cursor-pointer flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-500 mb-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Total Items</span>
+              <div class="w-8 h-8 rounded-xl bg-blue-50 text-[#1E40AF] flex items-center justify-center text-xs">
+                <i class="fa-solid fa-boxes-stacked"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-extrabold text-[#0F172A]" id="dashStatTotal">--</div>
+            <div class="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
+              <span>Catalogued Assets</span>
+            </div>
+          </div>
+
+          <!-- Available (Green) -->
+          <div onclick="filterByStatusQuick('Available')" class="modern-card p-4 cursor-pointer flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-500 mb-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Available</span>
+              <div class="w-8 h-8 rounded-xl bg-emerald-50 text-[#16A34A] flex items-center justify-center text-xs">
+                <i class="fa-solid fa-circle-check"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-extrabold text-[#16A34A]" id="dashStatAvailable">--</div>
+            <div class="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
+              <span>Ready for deploy</span>
+            </div>
+          </div>
+
+          <!-- Assigned / In Use (Blue) -->
+          <div onclick="filterByStatusQuick('Assigned')" class="modern-card p-4 cursor-pointer flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-500 mb-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Assigned</span>
+              <div class="w-8 h-8 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center text-xs">
+                <i class="fa-solid fa-user-check"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-extrabold text-[#2563EB]" id="dashStatAssigned">--</div>
+            <div class="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
+              <span>With staff / labs</span>
+            </div>
+          </div>
+
+          <!-- Maintenance (Amber) -->
+          <div onclick="filterByStatusQuick('Maintenance')" class="modern-card p-4 cursor-pointer flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-500 mb-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Maintenance</span>
+              <div class="w-8 h-8 rounded-xl bg-amber-50 text-[#D97706] flex items-center justify-center text-xs">
+                <i class="fa-solid fa-screwdriver-wrench"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-extrabold text-[#D97706]" id="dashStatMaintenance">--</div>
+            <div class="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
+              <span>Under repair</span>
+            </div>
+          </div>
+
+          <!-- Defective (Red) -->
+          <div onclick="filterByStatusQuick('Defective')" class="modern-card p-4 cursor-pointer flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-500 mb-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Defective</span>
+              <div class="w-8 h-8 rounded-xl bg-red-50 text-[#DC2626] flex items-center justify-center text-xs">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-extrabold text-[#DC2626]" id="dashStatDefective">--</div>
+            <div class="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
+              <span>Requires disposal</span>
+            </div>
+          </div>
+
+          <!-- Scanned Today (Accent Sky Blue) -->
+          <div onclick="switchView('logs')" class="modern-card p-4 cursor-pointer flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-500 mb-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Scans Today</span>
+              <div class="w-8 h-8 rounded-xl bg-sky-50 text-[#0EA5E9] flex items-center justify-center text-xs">
+                <i class="fa-solid fa-qrcode"></i>
+              </div>
+            </div>
+            <div class="text-2xl font-extrabold text-[#0EA5E9]" id="dashStatScannedToday">--</div>
+            <div class="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
+              <span>Mobile live syncs</span>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- 2. SPLIT SECTION: LIVE AUDIT FEED (LEFT) + CATEGORY DISTRIBUTION (RIGHT) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- Left: Real-Time Live Scan Stream (7 cols) -->
+          <div class="lg:col-span-8 modern-card overflow-hidden flex flex-col">
+            <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
+              <div class="flex items-center gap-2.5">
+                <span class="live-ping"></span>
+                <h3 class="text-xs font-bold text-[#0F172A] tracking-wider uppercase">Live Mobile Audit Stream</h3>
+                <span id="dashLiveCountBadge" class="text-[10px] font-bold bg-slate-200/80 text-slate-700 px-2 py-0.5 rounded-full">0 scans</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-[11px] text-slate-400 hidden sm:inline">Instant sync from Android</span>
+                <button onclick="refreshData()" class="text-xs text-slate-500 hover:text-[#1E40AF] p-1">
+                  <i class="fa-solid fa-arrows-rotate"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Table of recent scans -->
+            <div class="overflow-x-auto flex-1 max-h-[380px] overflow-y-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead class="bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider sticky top-0 z-10 border-b border-slate-200">
+                  <tr>
+                    <th class="py-2.5 px-4 text-[11px]">Time</th>
+                    <th class="py-2.5 px-4 text-[11px]">Asset Tag</th>
+                    <th class="py-2.5 px-4 text-[11px]">Item Details</th>
+                    <th class="py-2.5 px-4 text-[11px]">Action</th>
+                    <th class="py-2.5 px-4 text-[11px]">Location</th>
+                    <th class="py-2.5 px-4 text-[11px]">Staff</th>
+                  </tr>
+                </thead>
+                <tbody id="dashLiveScanTableBody" class="divide-y divide-slate-100">
+                  <tr>
+                    <td colspan="6" class="py-12 text-center text-slate-400">
+                      <i class="fa-solid fa-spinner fa-spin mr-2"></i> Connecting to live audit stream...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="p-3 bg-slate-50/60 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+              <span class="text-[11px] text-slate-400">Pushed automatically via Server-Sent Events</span>
+              <a onclick="switchView('logs')" class="text-xs text-[#1E40AF] font-bold hover:underline cursor-pointer flex items-center gap-1">
+                View Complete Audit History <i class="fa-solid fa-arrow-right text-[10px]"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Right: Category Health Breakdown & Quick Actions (4 cols) -->
+          <div class="lg:col-span-4 space-y-6">
+            
+            <!-- Category Distribution Card -->
+            <div class="modern-card p-5">
+              <h3 class="text-xs font-bold text-[#0F172A] uppercase tracking-wider mb-4 flex items-center justify-between">
+                <span>Inventory by Category</span>
+                <i class="fa-solid fa-layer-group text-slate-400"></i>
+              </h3>
+
+              <div class="space-y-3.5 text-xs" id="categoryDistributionList">
+                <!-- Dynamically populated -->
+                <div class="text-slate-400 text-center py-4">Calculating categories...</div>
+              </div>
+            </div>
+
+            <!-- Fast Quick Actions Card -->
+            <div class="modern-card p-5 bg-gradient-to-br from-blue-900 to-indigo-950 text-white border-0 shadow-md">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-sky-300">
+                  <i class="fa-solid fa-qrcode text-lg"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-sm">QR Code Asset Studio</h4>
+                  <p class="text-[11px] text-blue-200">Print standard &amp; thermal labels</p>
+                </div>
+              </div>
+              <p class="text-xs text-blue-100 mb-4 leading-relaxed">
+                Generate crisp scannable QR tags and physical stickers for newly delivered hardware.
+              </p>
+              <button onclick="switchView('qr-studio')" 
+                class="w-full bg-[#0EA5E9] hover:bg-[#0284C7] text-white text-xs font-bold py-2.5 rounded-xl shadow-xs transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-print"></i> Launch QR Tag Studio
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- VIEW 2: MASTER EQUIPMENT CATALOG TABLE -->
+      <!-- ===================================================================== -->
+      <div id="view-inventory" class="view-panel hidden space-y-4">
+        
+        <!-- Table Control Toolbar -->
+        <div class="modern-card p-4 sm:p-5 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 class="text-base font-bold text-[#0F172A] tracking-tight">Master Equipment Catalog</h2>
+              <p class="text-xs text-slate-500">Search, filter, track status, and generate barcodes for all IT hardware</p>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button onclick="exportToCsv()" class="text-xs font-semibold px-3 py-2 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 rounded-xl transition flex items-center gap-1.5 shadow-xs">
+                <i class="fa-solid fa-file-arrow-down text-[#16A34A]"></i>
+                <span>Export CSV</span>
+              </button>
+              <button onclick="openAddModal()" class="bg-[#1E40AF] hover:bg-[#1E3A8A] text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-xs flex items-center gap-1.5">
+                <i class="fa-solid fa-plus"></i>
+                <span>Add Equipment</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Multi-filter bar -->
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-1 border-t border-slate-100">
+            <!-- Search Input -->
+            <div class="sm:col-span-5 relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 pointer-events-none text-xs">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </span>
+              <input type="text" id="inventorySearchInput" oninput="applyFilters()" 
+                placeholder="Filter by Tag, Name, S/N, Location, or Staff..." 
+                class="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#1E40AF] bg-slate-50/50">
+            </div>
+
+            <!-- Category Selector -->
+            <div class="sm:col-span-4">
+              <select id="categoryFilter" onchange="applyFilters()" 
+                class="w-full py-2 px-3 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#1E40AF] bg-white text-slate-700 font-medium">
+                <option value="All">All Categories (Laptop, Desktop, Monitor, Network...)</option>
+                <option value="Laptop">Laptops</option>
+                <option value="Desktop">Desktops &amp; Workstations</option>
+                <option value="Monitor">Monitors &amp; Displays</option>
+                <option value="Network">Networking &amp; Switches</option>
+                <option value="Peripheral">Peripherals &amp; Accessories</option>
+              </select>
+            </div>
+
+            <!-- Status Selector -->
+            <div class="sm:col-span-3">
+              <select id="statusFilter" onchange="applyFilters()" 
+                class="w-full py-2 px-3 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#1E40AF] bg-white text-slate-700 font-medium">
+                <option value="All">All Statuses</option>
+                <option value="Available">Available</option>
+                <option value="Assigned">Assigned</option>
+                <option value="Maintenance">Maintenance</option>
+                <option value="Defective">Defective</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Master Data Table -->
+        <div class="modern-card overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="bg-slate-50/80 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200">
+                <tr>
+                  <th class="py-3 px-4">Asset Tag</th>
+                  <th class="py-3 px-4">Equipment Details</th>
+                  <th class="py-3 px-4">Category</th>
+                  <th class="py-3 px-4">Serial Number</th>
+                  <th class="py-3 px-4">Status</th>
+                  <th class="py-3 px-4">Assigned To</th>
+                  <th class="py-3 px-4">Location</th>
+                  <th class="py-3 px-4">Last Scanned</th>
+                  <th class="py-3 px-4 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="inventoryTableBody" class="divide-y divide-slate-100 font-medium">
+                <!-- Injected via app.js -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination Footer -->
+          <div class="p-4 bg-slate-50/60 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+            <div>
+              Showing <span id="showingStart" class="font-bold text-slate-800">1</span> to <span id="showingEnd" class="font-bold text-slate-800">8</span> of <span id="showingTotal" class="font-bold text-slate-800">8</span> entries
+            </div>
+
+            <div class="flex items-center gap-1.5" id="paginationControls">
+              <button onclick="changePage(-1)" id="btnPrevPage" class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed text-xs font-semibold">
+                Previous
+              </button>
+              <span id="pageIndicator" class="px-3 py-1.5 font-bold text-slate-700">Page 1</span>
+              <button onclick="changePage(1)" id="btnNextPage" class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed text-xs font-semibold">
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- VIEW 3: LIVE AUDIT LOGS FULL TRAIL -->
+      <!-- ===================================================================== -->
+      <div id="view-logs" class="view-panel hidden space-y-4">
+        
+        <div class="modern-card p-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="live-ping"></span>
+                <h2 class="text-base font-bold text-[#0F172A] tracking-tight">Full System Audit Trail</h2>
+              </div>
+              <p class="text-xs text-slate-500 mt-0.5">Chronological record of every scan, check-out, and status mutation</p>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <select id="logActionFilter" onchange="renderFullLogsTable()" 
+                class="py-2 px-3 rounded-xl border border-slate-200 text-xs font-semibold bg-white text-slate-700">
+                <option value="All">All Actions</option>
+                <option value="Audit Verify">Audit Verify</option>
+                <option value="Check-Out / Assign">Check-Out / Assign</option>
+                <option value="Report Defective">Report Defective</option>
+                <option value="New Registration">New Registration</option>
+              </select>
+              <button onclick="fetchScanLogs()" class="text-xs font-semibold px-3 py-2 border border-slate-200 bg-white hover:bg-slate-50 rounded-xl transition shadow-xs flex items-center gap-1.5 text-slate-700">
+                <i class="fa-solid fa-arrows-rotate"></i> Refresh Feed
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="modern-card overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="bg-slate-50/80 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200">
+                <tr>
+                  <th class="py-3 px-4">Timestamp</th>
+                  <th class="py-3 px-4">Asset Tag</th>
+                  <th class="py-3 px-4">Equipment Item</th>
+                  <th class="py-3 px-4">Action Taken</th>
+                  <th class="py-3 px-4">Audited By</th>
+                  <th class="py-3 px-4">Location</th>
+                  <th class="py-3 px-4">Remarks / Audit Notes</th>
+                </tr>
+              </thead>
+              <tbody id="fullAuditLogsTableBody" class="divide-y divide-slate-100 font-medium">
+                <!-- Injected via app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- VIEW 4: QR TAG STUDIO -->
+      <!-- ===================================================================== -->
+      <div id="view-qr-studio" class="view-panel hidden space-y-6">
+        
+        <div class="modern-card p-6">
+          <h2 class="text-base font-bold text-[#0F172A] tracking-tight mb-1">QR Asset Tag Studio &amp; Sticker Generator</h2>
+          <p class="text-xs text-slate-500 mb-6">Select any equipment item from inventory to generate and print high-density QR asset stickers.</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+            
+            <!-- Left Controls: Manual Input Fields & Quick Selector (5 cols) -->
+            <div class="md:col-span-5 space-y-4">
+              
+              <!-- Quick pre-fill from inventory -->
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">Quick Fill from Inventory (Optional)</label>
+                  <span class="text-[10px] text-slate-400">Auto-populates fields</span>
+                </div>
+                <select id="studioSelectEquipment" onchange="handleStudioSelectChange(event)" 
+                  class="w-full py-2 px-3 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#1E40AF] bg-slate-50/70 text-slate-700">
+                  <option value="">-- Or choose an existing item to pre-fill --</option>
+                  <!-- Injected via JS -->
+                </select>
+              </div>
+
+              <!-- Manual Asset Tag Input (Primary) -->
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  Asset Tag / QR Code <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 pointer-events-none text-xs">
+                    <i class="fa-solid fa-barcode"></i>
+                  </span>
+                  <input type="text" id="studioManualTag" oninput="handleStudioManualUpdate()" 
+                    value="IT-LAP-001" placeholder="e.g. IT-LAP-001" 
+                    class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 text-xs font-mono font-bold text-[#1E40AF] focus:outline-none focus:ring-2 focus:ring-[#1E40AF]">
+                </div>
+                <p class="text-[10px] text-slate-400 mt-1">This exact text is encoded into the scannable QR code.</p>
+              </div>
+
+              <!-- Laboratory Name Input (Required by Prompt) -->
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                  <span>Laboratory / Facility Name <span class="text-red-500">*</span></span>
+                  <span class="text-[10px] text-[#1E40AF] font-semibold"><i class="fa-solid fa-flask-vial"></i> Displayed on Sticker</span>
+                </label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 pointer-events-none text-xs">
+                    <i class="fa-solid fa-flask"></i>
+                  </span>
+                  <input type="text" id="studioManualLab" list="labSuggestions" oninput="handleStudioManualUpdate()" 
+                    value="Computer Laboratory 1" placeholder="e.g. Computer Laboratory 1 / IT Vault" 
+                    class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#1E40AF]">
+                  <datalist id="labSuggestions">
+                    <option value="Computer Laboratory 1">
+                    <option value="Computer Laboratory 2">
+                    <option value="IT Vault / Server Room">
+                    <option value="Multimedia Lab">
+                    <option value="Robotics &amp; IoT Lab">
+                    <option value="Faculty IT Workstation">
+                    <option value="Library IT Center">
+                  </datalist>
+                </div>
+              </div>
+
+              <!-- Manual Item Name Input -->
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                  <span>Equipment Item Name &amp; Model <span class="text-red-500">*</span></span>
+                  <span class="text-[10px] text-[#1E40AF] font-semibold"><i class="fa-solid fa-laptop"></i> Displayed on Sticker</span>
+                </label>
+                <input type="text" id="studioManualName" oninput="handleStudioManualUpdate()" 
+                  value="Dell Latitude 5420" placeholder="e.g. Dell Latitude 5420 / MacBook Pro" 
+                  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1E40AF]">
+              </div>
+
+              <!-- Category & Serial Row -->
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">Category</label>
+                  <select id="studioManualCategory" onchange="handleStudioManualUpdate()" 
+                    class="w-full py-2 px-3 rounded-xl border border-slate-300 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#1E40AF] bg-white text-slate-700">
+                    <option value="Laptop">Laptop</option>
+                    <option value="Desktop">Desktop</option>
+                    <option value="Monitor">Monitor</option>
+                    <option value="Network">Network</option>
+                    <option value="Peripheral">Peripheral</option>
+                    <option value="Hardware">Hardware</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">Serial Number</label>
+                  <input type="text" id="studioManualSerial" oninput="handleStudioManualUpdate()" 
+                    value="DL5420-9941X" placeholder="e.g. SN-8849120" 
+                    class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-[#1E40AF]">
+                </div>
+              </div>
+
+              <!-- Specific Station / Desk Position -->
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">Station / Desk Position</label>
+                <input type="text" id="studioManualLoc" oninput="handleStudioManualUpdate()" 
+                  value="Station 01 - Row A" placeholder="e.g. Station 01 - Row A" 
+                  class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[#1E40AF]">
+              </div>
+
+              <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600 space-y-1">
+                <div class="font-bold text-slate-800 flex items-center gap-1.5">
+                  <i class="fa-solid fa-circle-check text-[#16A34A]"></i> Real-Time QR Generator
+                </div>
+                <p class="text-[11px] leading-relaxed text-slate-500">
+                  Laboratory Name, Item Name, and Asset Tag update instantly on the printable sticker mockup.
+                </p>
+              </div>
+
+              <button onclick="printStudioSticker()" 
+                class="w-full bg-[#1E40AF] hover:bg-[#1E3A8A] text-white text-xs font-bold py-3 rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-print"></i> Print This QR Sticker Now
+              </button>
+            </div>
+
+            <!-- Right Preview: Live Sticker Mockup (7 cols) -->
+            <div class="md:col-span-7 flex flex-col items-center justify-center p-6 bg-slate-100/70 border border-slate-200 rounded-2xl">
+              <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4">Printable Sticker Preview (3.5" × 2.1")</div>
+
+              <div id="studioStickerPreview" class="sticker-box shadow-lg">
+                <!-- Header -->
+                <div class="flex items-center justify-between border-b border-slate-300 pb-1.5 mb-1.5">
+                  <div class="flex items-center gap-2">
+                    <img src="assets/logo.png" alt="Logo" class="w-6 h-6 rounded object-contain">
+                    <div>
+                      <div class="text-[11px] font-extrabold text-[#1E40AF] uppercase tracking-wider leading-none">IT ASSET MANAGEMENT</div>
+                      <div class="text-[8px] text-slate-500 font-semibold mt-0.5">PROPERTY OF IT INVENTORY</div>
+                    </div>
+                  </div>
+                  <span class="text-[9px] font-bold text-slate-700 uppercase border border-slate-300 rounded px-1.5 py-0.5" id="studioPreviewCategory">LAPTOP</span>
+                </div>
+
+                <!-- Laboratory Name Prominent Banner -->
+                <div class="bg-blue-50/80 border border-blue-200 rounded px-2 py-1 mb-2 flex items-center justify-between">
+                  <div class="flex items-center gap-1.5 min-w-0">
+                    <i class="fa-solid fa-flask text-[#1E40AF] text-[10px]"></i>
+                    <span class="text-[8px] font-extrabold text-[#1E40AF] uppercase tracking-wider">LAB:</span>
+                    <span class="text-[10px] font-extrabold text-[#0F172A] uppercase tracking-tight truncate" id="studioPreviewLab">COMPUTER LABORATORY 1</span>
+                  </div>
+                  <span class="text-[8px] text-slate-500 font-medium truncate ml-1" id="studioPreviewDeskLoc">Station 01</span>
+                </div>
+
+                <!-- Middle: QR Code + Item Name & Details -->
+                <div class="flex items-center gap-3">
+                  <div id="studioQrContainer" class="bg-white p-1 border border-slate-300 rounded flex-shrink-0 flex items-center justify-center">
+                    <!-- QR Generated Here -->
+                  </div>
+                  <div class="flex-1 space-y-1 text-left min-w-0">
+                    <div class="text-[13px] font-mono font-extrabold text-[#1E40AF] tracking-wider" id="studioPreviewTag">IT-LAP-001</div>
+                    <!-- Item Name Prominent -->
+                    <div class="text-[11px] font-extrabold text-[#0F172A] leading-tight truncate" id="studioPreviewName">Dell Latitude 5420</div>
+                    <div class="text-[9px] text-slate-500 font-mono truncate">S/N: <span id="studioPreviewSerial" class="font-bold">DL5420-9941X</span></div>
+                  </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="border-t border-slate-300 pt-1 mt-2 text-[8px] text-center text-slate-500 font-semibold uppercase tracking-wider">
+                  Notice: Scannable IT Equipment Barcode. Do not remove.
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-3.5 px-6 mt-auto">
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2">
+        <div class="flex items-center gap-2">
+          <img src="assets/logo.png" alt="Logo" class="w-4 h-4 rounded object-contain">
+          <span>&copy; 2026 IT Equipment Inventory Management System</span>
+        </div>
+        <div class="flex items-center gap-3 text-[11px] text-slate-400">
+          <span>Unified Android (Java) &amp; Web Sync</span>
+          <span>&bull;</span>
+          <span class="text-slate-600 font-medium">Theme: #1E40AF &amp; #0EA5E9</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: ADD / EDIT EQUIPMENT -->
+  <!-- ========================================================================= -->
+  <div id="equipmentModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-lg w-full border border-slate-100 max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 mb-4">
+        <div>
+          <h3 id="modalTitle" class="text-base font-bold text-[#0F172A]">Add New IT Equipment</h3>
+          <p class="text-xs text-slate-400">Record a new asset to generate a QR tag and sync with mobile scanners</p>
+        </div>
+        <button onclick="closeModal('equipmentModal')" class="text-slate-400 hover:text-slate-600 p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="equipmentForm" onsubmit="handleSaveEquipment(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="formItemId">
+
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Asset Tag (Unique QR/Barcode) -->
+          <div>
+            <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1">
+              Asset Tag (QR/Barcode) <span class="text-red-500">*</span>
+            </label>
+            <input type="text" id="formAssetTag" required placeholder="e.g. IT-LAP-009"
+              class="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono font-bold text-[#1E40AF] focus:outline-none focus:ring-2 focus:ring-[#1E40AF]">
+            <p class="text-[10px] text-slate-400 mt-0.5">Scanned by Android camera</p>
+          </div>
+
+          <!-- Category -->
+          <div>
+            <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1">Category <span class="text-red-500">*</span></label>
+            <select id="formCategory" required 
+              class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1E40AF] bg-white text-slate-700 font-semibold">
+              <option value="Laptop">Laptop</option>
+              <option value="Desktop">Desktop</option>
+              <option value="Monitor">Monitor</option>
+              <option value="Network">Network</option>
+              <option value="Peripheral">Peripheral</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Item Name / Model -->
+        <div>
+          <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1">
+            Item Name &amp; Model <span class="text-red-500">*</span>
+          </label>
+          <input type="text" id="formItemName" required placeholder="e.g. Dell Latitude 5420 / MacBook Pro 16"
+            class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1E40AF] text-slate-800 font-semibold">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Serial Number -->
+          <div>
+            <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1">Serial Number</label>
+            <input type="text" id="formSerialNumber" placeholder="e.g. CN-0K75P8-74261"
+              class="w-full px-3 py-2 rounded-xl border border-slate-300 font-mono focus:outline-none focus:ring-2 focus:ring-[#1E40AF]">
+          </div>
+
+          <!-- Status -->
+          <div>
+            <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1">Status <span class="text-red-500">*</span></label>
+            <select id="formStatus" required 
+              class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1E40AF] bg-white text-slate-700 font-semibold">
+              <option value="Available">Available</option>
+              <option value="Assigned">Assigned</option>
+              <option value="Maintenance">Maintenance</option>
+              <option value="Defective">Defective</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Assigned To -->
+          <div>
+            <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1">Assigned To (Staff/Dept)</label>
+            <input type="text" id="formAssignedTo" placeholder="e.g. John Doe (Engineering)"
+              class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1E40AF]">
+          </div>
+
+          <!-- Location -->
+          <div>
+            <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1">Location <span class="text-red-500">*</span></label>
+            <input type="text" id="formLocation" required placeholder="e.g. Floor 3 - Desk 304"
+              class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1E40AF]">
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-200 flex items-center justify-end gap-2">
+          <button type="button" onclick="closeModal('equipmentModal')" 
+            class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold">
+            Cancel
+          </button>
+          <button type="submit" 
+            class="bg-[#1E40AF] hover:bg-[#1E3A8A] text-white px-5 py-2 rounded-xl shadow-md font-bold flex items-center gap-2">
+            <i class="fa-solid fa-floppy-disk"></i> Save &amp; Sync
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: QUICK QR CODE STICKER DIALOG -->
+  <!-- ========================================================================= -->
+  <div id="qrModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-md w-full border border-slate-100 max-h-[95vh] overflow-y-auto">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 mb-3 no-print">
+        <h3 class="text-base font-bold text-[#0F172A] flex items-center gap-2">
+          <i class="fa-solid fa-qrcode text-[#0EA5E9]"></i> IT Equipment Asset Sticker
+        </h3>
+        <button onclick="closeModal('qrModal')" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Quick Edit Bar inside Modal (Adjust Lab Name / Item Name live) -->
+      <div class="no-print bg-slate-50 p-3 rounded-xl border border-slate-200 mb-3 space-y-2 text-xs">
+        <div class="flex items-center justify-between text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+          <span>Sticker Text Customizer</span>
+          <span class="text-[10px] text-[#1E40AF]"><i class="fa-solid fa-bolt"></i> Live sync to preview</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 mb-0.5">Laboratory Name</label>
+            <input type="text" id="qrModalInputLab" oninput="handleModalQuickUpdate()" 
+              class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#1E40AF]">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 mb-0.5">Item Name &amp; Model</label>
+            <input type="text" id="qrModalInputName" oninput="handleModalQuickUpdate()" 
+              class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#1E40AF]">
+          </div>
+        </div>
+      </div>
+
+      <!-- Printable Sticker Preview -->
+      <div id="printableStickerArea" class="py-2">
+        <div class="sticker-box border-2 border-slate-900 rounded-lg p-3 bg-white shadow-sm flex flex-col justify-between">
+          
+          <!-- Top Header -->
+          <div class="flex items-center justify-between border-b border-slate-300 pb-1.5 mb-1.5">
+            <div class="flex items-center gap-2">
+              <img src="assets/logo.png" alt="Logo" class="w-6 h-6 rounded object-contain">
+              <div>
+                <div class="text-[11px] font-extrabold text-[#1E40AF] uppercase tracking-wider leading-none">IT ASSET MANAGEMENT</div>
+                <div class="text-[8px] text-slate-500 font-semibold mt-0.5">PROPERTY OF IT INVENTORY</div>
+              </div>
+            </div>
+            <span class="text-[9px] font-bold text-slate-700 uppercase border border-slate-300 rounded px-1.5 py-0.5" id="stickerCategory">LAPTOP</span>
+          </div>
+
+          <!-- Prominent Laboratory Name Banner -->
+          <div class="bg-blue-50/80 border border-blue-200 rounded px-2 py-1 mb-2 flex items-center justify-between">
+            <div class="flex items-center gap-1.5 min-w-0">
+              <i class="fa-solid fa-flask text-[#1E40AF] text-[10px]"></i>
+              <span class="text-[8px] font-extrabold text-[#1E40AF] uppercase tracking-wider">LAB:</span>
+              <span class="text-[10px] font-extrabold text-[#0F172A] uppercase tracking-tight truncate" id="stickerLabName">COMPUTER LABORATORY 1</span>
+            </div>
+            <span class="text-[8px] text-slate-500 font-medium truncate ml-1" id="stickerLocation">Station 01</span>
+          </div>
+
+          <!-- QR Code + Item Name & Asset Tag Details -->
+          <div class="flex items-center gap-3">
+            <div id="stickerQrContainer" class="bg-white p-1 border border-slate-300 rounded flex-shrink-0 flex items-center justify-center">
+              <!-- QR Code generated here -->
+            </div>
+            <div class="flex-1 space-y-1 text-left min-w-0">
+              <div class="text-[13px] font-mono font-extrabold text-[#1E40AF] tracking-wider" id="stickerAssetTag">IT-LAP-001</div>
+              <!-- Prominent Item Name -->
+              <div class="text-[11px] font-extrabold text-[#0F172A] leading-tight truncate" id="stickerItemName">Dell Latitude 5420</div>
+              <div class="text-[9px] text-slate-500 font-mono truncate">S/N: <span id="stickerSerial" class="font-bold">DL5420-9941X</span></div>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="border-t border-slate-300 pt-1 mt-2 text-[8px] text-center text-slate-500 font-semibold uppercase tracking-wider">
+            Notice: Scannable IT Equipment Barcode. Do not remove.
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="pt-4 border-t border-slate-200 flex items-center justify-end gap-2 no-print">
+        <button type="button" onclick="closeModal('qrModal')" 
+          class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold text-xs">
+          Close
+        </button>
+        <button type="button" onclick="printSticker()" 
+          class="bg-[#1E40AF] hover:bg-[#1E3A8A] text-white px-5 py-2 rounded-xl shadow-md font-bold text-xs flex items-center gap-2">
+          <i class="fa-solid fa-print"></i> Print QR Sticker
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Audio Chime for Live Scan Synced -->
+  <audio id="scanChime" preload="auto">
+    <source src="https://cdn.freesound.org/previews/320/320655_5260872-lq.mp3" type="audio/mp3">
+  </audio>
+
+  <!-- Modern Application Logic -->
+  <script src="js/app.js"></script>
+</body>
+</html>

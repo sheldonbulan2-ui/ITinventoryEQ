@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <!-- ZXing Embedded Camera Preview View -->
+    <com.journeyapps.barcodescanner.DecoratedBarcodeView
+        android:id="@+id/barcodeScannerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Top Overlay Control Bar -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#99000000"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp">
+
+        <ImageView
+            android:id="@+id/btnScannerBack"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="6dp"
+            android:src="@android:drawable/ic_menu_revert"
+            app:tint="@color/white"
+            android:contentDescription="Back"
+            android:layout_centerVertical="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Scan IT Asset Tag"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/white" />
+
+        <!-- Flashlight Toggle -->
+        <ImageView
+            android:id="@+id/btnToggleFlash"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="6dp"
+            android:src="@android:drawable/ic_menu_camera"
+            app:tint="@color/white"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="Flashlight" />
+    </RelativeLayout>
+
+    <!-- Bottom Instruction & Manual Entry Button Controls -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginBottom="28dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_asset_tag_pill"
+            android:backgroundTint="#CC0F172A"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp"
+            android:gravity="center"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/scanner_instruction"
+                android:textSize="11sp"
+                android:textColor="@color/white"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+
+        <!-- Manual Input Button (In case camera fails or code is damaged) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnScannerManualInput"
+            android:layout_width="wrap_content"
+            android:layout_height="46dp"
+            android:text="Type Asset Tag Manually"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            app:backgroundTint="#CC1E40AF"
+            app:cornerRadius="12dp"
+            app:icon="@drawable/ic_nav_manual"
+            app:iconGravity="textStart"
+            app:iconTint="@color/white"
+            app:strokeColor="#55FFFFFF"
+            app:strokeWidth="1dp" />
+
+    </LinearLayout>
+
+    <!-- Scanning Progress Indicator -->
+    <ProgressBar
+        android:id="@+id/scannerProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminateTint="@color/accent"
+        android:visibility="gone" />
+
+</RelativeLayout>

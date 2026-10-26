@@ -1,0 +1,311 @@
+/* ==========================================================================
+   IT Equipment Inventory System - Modern Enterprise Admin UI
+   Brand Theme: #1E40AF (Primary Tech Blue), #0EA5E9 (Sky Blue Accent)
+   Surface: #F8FAFC (Light Slate), Card: #FFFFFF (Pure White), Text: #0F172A
+   ========================================================================== */
+
+:root {
+  --color-primary: #1E40AF;
+  --color-primary-dark: #1E3A8A;
+  --color-primary-light: #3B82F6;
+  --color-accent: #0EA5E9;
+  --color-accent-hover: #0284C7;
+  --color-accent-soft: rgba(14, 165, 233, 0.1);
+  --color-bg-surface: #F8FAFC;
+  --color-card-surface: #FFFFFF;
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94A3B8;
+  --color-border: #E2E8F0;
+  --color-border-subtle: #F1F5F9;
+
+  /* Status Colors */
+  --status-available: #16A34A;
+  --status-available-bg: #DCFCE7;
+  --status-assigned: #2563EB;
+  --status-assigned-bg: #DBEAFE;
+  --status-maintenance: #D97706;
+  --status-maintenance-bg: #FEF3C7;
+  --status-defective: #DC2626;
+  --status-defective-bg: #FEE2E2;
+
+  --radius-xl: 12px;
+  --radius-lg: 8px;
+  --radius-pill: 9999px;
+
+  --sidebar-width: 260px;
+  --sidebar-width-collapsed: 76px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Sidebar Styling & Transitions */
+.sidebar-transition {
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-xl);
+  font-size: 0.825rem;
+  font-weight: 500;
+  color: #475569;
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+  user-select: none;
+}
+
+.nav-link:hover {
+  background-color: #F1F5F9;
+  color: #1E40AF;
+}
+
+.nav-link.active {
+  background-color: #EFF6FF;
+  color: #1E40AF;
+  font-weight: 600;
+}
+
+.nav-link.active .nav-icon {
+  color: #1E40AF;
+}
+
+/* Status Badges (Pills) */
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 0.725rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.badge-available {
+  background-color: var(--status-available-bg);
+  color: var(--status-available);
+  border: 1px solid rgba(22, 163, 74, 0.3);
+}
+.badge-available::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--status-available);
+}
+
+.badge-assigned {
+  background-color: var(--status-assigned-bg);
+  color: var(--status-assigned);
+  border: 1px solid rgba(37, 99, 235, 0.3);
+}
+.badge-assigned::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--status-assigned);
+}
+
+.badge-maintenance {
+  background-color: var(--status-maintenance-bg);
+  color: var(--status-maintenance);
+  border: 1px solid rgba(217, 119, 6, 0.3);
+}
+.badge-maintenance::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--status-maintenance);
+}
+
+.badge-defective {
+  background-color: var(--status-defective-bg);
+  color: var(--status-defective);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+}
+.badge-defective::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--status-defective);
+}
+
+/* Category Badge */
+.badge-category {
+  background-color: #F8FAFC;
+  color: #334155;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Action Type Badges */
+.badge-action-audit {
+  background-color: #E0F2FE;
+  color: #0369A1;
+}
+.badge-action-assign {
+  background-color: #EFF6FF;
+  color: #1D4ED8;
+}
+.badge-action-defective {
+  background-color: #FEE2E2;
+  color: #B91C1C;
+}
+.badge-action-reg {
+  background-color: #F0FDF4;
+  color: #15803D;
+}
+
+/* Pulse animation for newly synchronized scan */
+@keyframes rowPulse {
+  0% {
+    background-color: rgba(14, 165, 233, 0.25);
+    transform: scale(1.002);
+  }
+  50% {
+    background-color: rgba(14, 165, 233, 0.12);
+  }
+  100% {
+    background-color: transparent;
+    transform: scale(1);
+  }
+}
+
+.live-pulse-highlight {
+  animation: rowPulse 2.8s ease-out;
+}
+
+/* Live indicator dot with glowing ripple */
+@keyframes liveDotGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+.live-ping {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: #22C55E;
+  border-radius: 50%;
+  animation: liveDotGlow 1.8s infinite;
+}
+
+/* Asset Tag Pill */
+.asset-tag-pill {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  background-color: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  border-radius: 6px;
+  color: #1E293B;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  letter-spacing: -0.01em;
+}
+
+/* Modern Card Hover */
+.modern-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.modern-card:hover {
+  box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.08);
+  border-color: #CBD5E1;
+}
+
+/* Print Styles for QR Asset Sticker */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printableStickerArea, #printableStickerArea *,
+  #studioStickerPreview, #studioStickerPreview * {
+    visibility: visible;
+  }
+  #printableStickerArea, #studioStickerPreview {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    margin: 0;
+    padding: 12px;
+    box-shadow: none !important;
+    background-color: #FFFFFF !important;
+    color: #0F172A !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
+
+.sticker-box {
+  width: 3.5in;
+  min-height: 2.1in;
+  border: 2px dashed #0F172A;
+  border-radius: 10px;
+  padding: 14px;
+  background-color: #FFFFFF;
+  color: #0F172A;
+  margin: 0 auto;
+}

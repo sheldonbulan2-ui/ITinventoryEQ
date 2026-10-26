@@ -1,0 +1,57 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.ITinventoryEQ" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Brand Colors -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorSecondary">@color/accent</item>
+        <item name="colorAccent">@color/accent</item>
+        
+        <!-- Surface & Background -->
+        <item name="android:windowBackground">@color/background</item>
+        <item name="colorSurface">@color/card_surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        
+        <!-- Status Bar -->
+        <item name="android:statusBarColor">@color/primary</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Rounded Shape Tokens (12dp) -->
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.IT.Corner12dp</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.IT.Corner12dp</item>
+    </style>
+
+    <style name="Theme.ITinventoryEQ" parent="Base.Theme.ITinventoryEQ" />
+
+    <!-- 12dp Corner Radius Style matching Web 12px (rounded-xl) -->
+    <style name="ShapeAppearance.IT.Corner12dp" parent="ShapeAppearance.Material3.Corner.Medium">
+        <item name="cornerSize">12dp</item>
+    </style>
+
+    <!-- Unified Button Style (12dp corner radius + #1E40AF) -->
+    <style name="Widget.IT.Button.Primary" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/primary</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- Unified Accent Button Style (12dp corner radius + #0EA5E9) -->
+    <style name="Widget.IT.Button.Accent" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/accent</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- Unified Material Card View Style (12dp corner radius) -->
+    <style name="Widget.IT.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">12dp</item>
+        <item name="cardElevation">2dp</item>
+        <item name="cardBackgroundColor">@color/card_surface</item>
+        <item name="strokeColor">@color/border_light</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+</resources>
