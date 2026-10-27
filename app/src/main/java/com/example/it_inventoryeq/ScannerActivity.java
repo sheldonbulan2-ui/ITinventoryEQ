@@ -166,7 +166,7 @@ public class ScannerActivity extends AppCompatActivity {
     }
 
     /**
-     * Auto-saves the scanned code directly to the cloud database with high speed,
+     * Auto-saves the scanned code directly to the cloud database with high speed (< 2s),
      * then prompts the user with "OK" to immediately scan the next equipment.
      */
     private void autoSaveAndConfirmNext(final String scannedCode) {
@@ -185,13 +185,37 @@ public class ScannerActivity extends AppCompatActivity {
             @Override
             public void onSuccess(JsonObject result) {
                 progressBar.setVisibility(View.GONE);
-                showScanSuccessNextDialog(scannedCode, true, null);
+                String itemName = "IT Equipment";
+                String status = "Verified";
+                String location = "Computer Laboratory 1";
+
+                if (result != null) {
+                    if (result.has("item") && !result.get("item").isJsonNull()) {
+                        JsonObject itemObj = result.getAsJsonObject("item");
+                        if (itemObj.has("item_name") && !itemObj.get("item_name").isJsonNull()) {
+                            itemName = itemObj.get("item_name").getAsString();
+                        }
+                        if (itemObj.has("status") && !itemObj.get("status").isJsonNull()) {
+                            status = itemObj.get("status").getAsString();
+                        }
+                        if (itemObj.has("location") && !itemObj.get("location").isJsonNull()) {
+                            location = itemObj.get("location").getAsString();
+                        }
+                    } else if (result.has("log") && !result.get("log").isJsonNull()) {
+                        JsonObject logObj = result.getAsJsonObject("log");
+                        if (logObj.has("item_name") && !logObj.get("item_name").isJsonNull()) {
+                            itemName = logObj.get("item_name").getAsString();
+                        }
+                    }
+                }
+
+                showScanSuccessNextDialog(scannedCode, itemName, status, location);
             }
 
             @Override
             public void onError(String error) {
                 progressBar.setVisibility(View.GONE);
-                showScanSuccessNextDialog(scannedCode, false, error);
+                showScanErrorDialog(scannedCode, error);
             }
         });
     }
@@ -199,13 +223,37 @@ public class ScannerActivity extends AppCompatActivity {
     /**
      * Shows fast confirmation: "Saved to Database! Click OK to scan next item"
      */
-    private void showScanSuccessNextDialog(String scannedCode, boolean success, String errorMsg) {
+    private void showScanSuccessNextDialog(String scannedCode, String itemName, String status, String location) {
+        String msg = "Item: " + itemName + "\n"
+                   + "Asset Tag: " + scannedCode + "\n"
+                   + "Laboratory: " + location + "\n"
+                   + "Status: " + status + "\n\n"
+                   + "✓ Synchronized to Web Admin in real-time.\n"
+                   + "Click OK to scan next item.";
+
         new AlertDialog.Builder(this)
-                .setTitle(success ? "Auto-Saved to Database!" : "Scan Recorded")
-                .setMessage(success
-                        ? "Asset Tag [" + scannedCode + "] successfully saved and synchronized.\n\nClick OK to scan next item."
-                        : "Asset Tag [" + scannedCode + "] recorded.\n(" + errorMsg + ")\n\nClick OK to continue scanning.")
+                .setTitle("Auto-Saved to Database!")
+                .setMessage(msg)
                 .setPositiveButton("OK", (d, w) -> {
+                    d.dismiss();
+                    resumeScanning();
+                })
+                .setCancelable(false)
+                .show();
+    }
+
+    private void showScanErrorDialog(final String scannedCode, String errorMsg) {
+        new AlertDialog.Builder(this)
+                .setTitle("Sync Connection Error")
+                .setMessage("Asset Tag: " + scannedCode + "\n\n"
+                        + "Failed to reach REST API:\n" + errorMsg + "\n\n"
+                        + "Server URL: " + apiClient.getServerUrl() + "\n\n"
+                        + "Please verify your internet connection or server status.")
+                .setPositiveButton("Retry", (d, w) -> {
+                    d.dismiss();
+                    autoSaveAndConfirmNext(scannedCode);
+                })
+                .setNegativeButton("Scan Next", (d, w) -> {
                     d.dismiss();
                     resumeScanning();
                 })

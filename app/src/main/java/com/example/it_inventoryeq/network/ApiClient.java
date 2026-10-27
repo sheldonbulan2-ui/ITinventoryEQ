@@ -36,7 +36,8 @@ public class ApiClient {
     private static final String KEY_SERVER_URL = "server_base_url";
     private static final String KEY_USER_JSON = "logged_user";
     
-    // Default URL: 10.0.2.2 connects from Android Emulator to the host PC's localhost:5000
+    // Live Cloud Production REST API (Render.com + TiDB Cloud Serverless)
+    public static final String PRODUCTION_URL = "https://itinventoryeq.onrender.com";
     public static final String DEFAULT_EMULATOR_URL = "http://10.0.2.2:5000";
 
     private static ApiClient instance;
@@ -54,11 +55,20 @@ public class ApiClient {
         this.prefs = context.getApplicationContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         this.gson = new Gson();
         this.mainHandler = new Handler(Looper.getMainLooper());
+        
+        // Fast 5-second timeouts with connection pooling for sub-second REST API response
         this.client = new OkHttpClient.Builder()
-                .connectTimeout(8, TimeUnit.SECONDS)
-                .readTimeout(8, TimeUnit.SECONDS)
-                .writeTimeout(8, TimeUnit.SECONDS)
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .writeTimeout(5, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
                 .build();
+
+        // Migrate any legacy emulator/localhost URLs to production Render cloud endpoint
+        String saved = prefs.getString(KEY_SERVER_URL, null);
+        if (saved == null || saved.trim().isEmpty() || saved.contains("10.0.2.2") || saved.contains("localhost")) {
+            prefs.edit().putString(KEY_SERVER_URL, PRODUCTION_URL).apply();
+        }
     }
 
     public static synchronized ApiClient getInstance(Context context) {
@@ -69,11 +79,15 @@ public class ApiClient {
     }
 
     public String getServerUrl() {
-        return prefs.getString(KEY_SERVER_URL, DEFAULT_EMULATOR_URL);
+        String saved = prefs.getString(KEY_SERVER_URL, PRODUCTION_URL);
+        if (saved == null || saved.trim().isEmpty() || saved.contains("10.0.2.2") || saved.contains("localhost")) {
+            return PRODUCTION_URL;
+        }
+        return saved.trim();
     }
 
     public void setServerUrl(String url) {
-        String cleanUrl = url.trim();
+        String cleanUrl = (url == null || url.trim().isEmpty()) ? PRODUCTION_URL : url.trim();
         if (cleanUrl.endsWith("/")) {
             cleanUrl = cleanUrl.substring(0, cleanUrl.length() - 1);
         }

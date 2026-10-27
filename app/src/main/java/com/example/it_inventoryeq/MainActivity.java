@@ -189,6 +189,37 @@ public class MainActivity extends AppCompatActivity {
                     .setNegativeButton("Cancel", null)
                     .show();
         });
+
+        // Server connection info dialog
+        tvLiveSyncStatus.setOnClickListener(v -> showServerConnectionDialog());
+    }
+
+    private void showServerConnectionDialog() {
+        final EditText input = new EditText(this);
+        input.setText(apiClient.getServerUrl());
+        input.setSingleLine(true);
+        input.setPadding(40, 30, 40, 30);
+        input.setBackgroundResource(R.drawable.bg_edit_text);
+
+        new AlertDialog.Builder(this)
+                .setTitle("REST API Server Connection")
+                .setMessage("Active Cloud Endpoint:\n" + apiClient.getServerUrl() + "\n\nYou can customize or reset to default Render cloud server:")
+                .setView(input)
+                .setPositiveButton("Save", (d, w) -> {
+                    String newUrl = input.getText().toString().trim();
+                    if (!newUrl.isEmpty()) {
+                        apiClient.setServerUrl(newUrl);
+                        loadDashboardData();
+                        Toast.makeText(this, "Connected: " + apiClient.getServerUrl(), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNeutralButton("Reset Default", (d, w) -> {
+                    apiClient.setServerUrl(ApiClient.PRODUCTION_URL);
+                    loadDashboardData();
+                    Toast.makeText(this, "Reset to Render Cloud: " + ApiClient.PRODUCTION_URL, Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Close", null)
+                .show();
     }
 
     public void loadDashboardData() {
@@ -198,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(List<ScanLog> logs) {
                 swipeRefreshScans.setRefreshing(false);
+                tvLiveSyncStatus.setText("● Connected: Render Cloud");
                 if (logs != null && !logs.isEmpty()) {
                     scanLogAdapter.setScanLogs(logs);
                     rvRecentScans.setVisibility(View.VISIBLE);
@@ -212,6 +244,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onError(String message) {
                 swipeRefreshScans.setRefreshing(false);
+                tvLiveSyncStatus.setText("⚠ Offline / Error");
             }
         });
 
