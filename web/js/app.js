@@ -363,6 +363,7 @@ function handleIncomingRealtimeScan(data) {
   if (log) {
     allScanLogs.unshift(log);
     renderLiveScanTables(true);
+    renderFullLogsTable(true);
   }
 
   // 3. Update or add equipment in master catalog
@@ -552,7 +553,7 @@ function renderDashboardLiveFeed(highlightFirst = false) {
   if (!allScanLogs || allScanLogs.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="6" class="py-8 text-center text-slate-400">
+        <td colspan="7" class="py-8 text-center text-slate-400">
           No mobile scans recorded yet. Scan an equipment tag using the Android App!
         </td>
       </tr>
@@ -565,25 +566,33 @@ function renderDashboardLiveFeed(highlightFirst = false) {
 
   tbody.innerHTML = displayLogs.map((log, index) => {
     const isNew = highlightFirst && index === 0;
-    const timeFormatted = formatTime(log.timestamp);
+    const timeFormatted = formatDateTime(log.timestamp);
     const actionBadge = getActionBadge(log.action_type);
+    const eq = allEquipment ? allEquipment.find(e => e.asset_tag === log.asset_tag) : null;
+    const categoryInfo = eq ? `<span class="text-[10px] text-slate-400 font-normal block">${escapeHtml(eq.category || '')} ${eq.serial_number ? '• S/N: ' + escapeHtml(eq.serial_number) : ''}</span>` : '';
 
     return `
       <tr class="hover:bg-slate-50 transition border-b border-slate-100 ${isNew ? 'live-pulse-highlight' : ''}">
-        <td class="py-2.5 px-4 font-mono text-slate-400 whitespace-nowrap text-[11px]">${timeFormatted}</td>
+        <td class="py-2.5 px-4 whitespace-nowrap">${timeFormatted}</td>
         <td class="py-2.5 px-4 whitespace-nowrap">
-          <span class="asset-tag-pill font-mono">
+          <span class="asset-tag-pill font-mono font-bold">
             <i class="fa-solid fa-qrcode text-[#0EA5E9] text-[10px]"></i>
             ${escapeHtml(log.asset_tag)}
           </span>
         </td>
-        <td class="py-2.5 px-4 font-semibold text-slate-800 max-w-[180px] truncate">${escapeHtml(log.item_name || 'Equipment')}</td>
+        <td class="py-2.5 px-4 font-semibold text-slate-800 max-w-[200px]">
+          <div class="truncate">${escapeHtml(log.item_name || 'Equipment')}</div>
+          ${categoryInfo}
+        </td>
         <td class="py-2.5 px-4 whitespace-nowrap">${actionBadge}</td>
         <td class="py-2.5 px-4 text-slate-600 whitespace-nowrap text-[11px]">
-          <i class="fa-solid fa-location-dot text-slate-400 mr-1"></i>${escapeHtml(log.location || 'IT Storage')}
+          <i class="fa-solid fa-location-dot text-slate-400 mr-1"></i>${escapeHtml(log.location || 'Computer Laboratory 1')}
         </td>
         <td class="py-2.5 px-4 text-slate-700 whitespace-nowrap font-medium text-[11px]">
           <i class="fa-solid fa-user-circle text-slate-400 mr-1"></i>${escapeHtml(log.scanned_by || 'Staff')}
+        </td>
+        <td class="py-2.5 px-4 text-slate-500 text-[11px] max-w-[180px] truncate" title="${escapeHtml(log.remarks || '')}">
+          ${escapeHtml(log.remarks || 'Auto-verified via scanner')}
         </td>
       </tr>
     `;
@@ -613,28 +622,33 @@ function renderFullLogsTable(highlightFirst = false) {
 
   tbody.innerHTML = filtered.map((log, index) => {
     const isNew = highlightFirst && index === 0;
-    const timeFormatted = formatTime(log.timestamp);
+    const timeFormatted = formatDateTime(log.timestamp);
     const actionBadge = getActionBadge(log.action_type);
+    const eq = allEquipment ? allEquipment.find(e => e.asset_tag === log.asset_tag) : null;
+    const categoryInfo = eq ? `<span class="text-[10px] text-slate-400 font-normal block">${escapeHtml(eq.category || '')} ${eq.serial_number ? '• S/N: ' + escapeHtml(eq.serial_number) : ''}</span>` : '';
 
     return `
       <tr class="hover:bg-slate-50 transition border-b border-slate-100 ${isNew ? 'live-pulse-highlight' : ''}">
-        <td class="py-3 px-4 font-mono text-slate-500 whitespace-nowrap">${timeFormatted}</td>
+        <td class="py-3 px-4 whitespace-nowrap">${timeFormatted}</td>
         <td class="py-3 px-4 whitespace-nowrap">
           <span class="asset-tag-pill font-mono font-bold">
             <i class="fa-solid fa-barcode text-slate-400 text-[10px]"></i>
             ${escapeHtml(log.asset_tag)}
           </span>
         </td>
-        <td class="py-3 px-4 font-bold text-slate-800">${escapeHtml(log.item_name || 'Equipment')}</td>
+        <td class="py-3 px-4 font-bold text-slate-800">
+          <div>${escapeHtml(log.item_name || 'Equipment')}</div>
+          ${categoryInfo}
+        </td>
         <td class="py-3 px-4 whitespace-nowrap">${actionBadge}</td>
+        <td class="py-3 px-4 text-slate-600 whitespace-nowrap">
+          <i class="fa-solid fa-location-dot text-slate-400 mr-1"></i>${escapeHtml(log.location || 'Computer Laboratory 1')}
+        </td>
         <td class="py-3 px-4 text-slate-700 font-medium whitespace-nowrap">
           <i class="fa-solid fa-user text-slate-400 mr-1"></i>${escapeHtml(log.scanned_by || 'Staff')}
         </td>
-        <td class="py-3 px-4 text-slate-600 whitespace-nowrap">
-          <i class="fa-solid fa-location-dot text-slate-400 mr-1"></i>${escapeHtml(log.location || 'N/A')}
-        </td>
         <td class="py-3 px-4 text-slate-500 max-w-xs truncate" title="${escapeHtml(log.remarks || '')}">
-          ${escapeHtml(log.remarks || '-')}
+          ${escapeHtml(log.remarks || 'Auto-verified via scanner')}
         </td>
       </tr>
     `;
@@ -762,8 +776,8 @@ function renderInventoryTable() {
           <i class="fa-solid fa-location-dot text-slate-400 mr-1"></i>${escapeHtml(item.location || 'IT Storage')}
         </td>
         <td class="py-3 px-4 text-slate-500 whitespace-nowrap text-[11px]">
-          <div class="font-medium">${lastScanFormatted}</div>
-          <div class="text-[10px] text-slate-400">${escapeHtml(item.last_scanned_by || 'System')}</div>
+          <div>${lastScanFormatted}</div>
+          ${item.last_scanned_by ? `<div class="text-[10px] text-slate-400 mt-0.5"><i class="fa-solid fa-user-check text-[9px] mr-0.5 text-slate-400"></i> ${escapeHtml(item.last_scanned_by)}</div>` : ''}
         </td>
         <td class="py-3 px-4 text-center whitespace-nowrap">
           <div class="inline-flex items-center gap-1.5">
@@ -1125,15 +1139,37 @@ function exportToCsv() {
 // UTILITY HELPERS
 // =============================================================================
 
-function formatTime(isoString) {
-  if (!isoString) return '-';
+function formatDateTime(isoString) {
+  if (!isoString) return '<span class="text-slate-400 italic">Never</span>';
   try {
-    const d = new Date(isoString);
-    if (isNaN(d.getTime())) return '-';
-    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    let d;
+    if (typeof isoString === 'string' && isoString.includes(' ') && !isoString.includes('T')) {
+      d = new Date(isoString.replace(' ', 'T') + 'Z');
+    } else {
+      d = new Date(isoString);
+    }
+    if (isNaN(d.getTime())) return `<span class="text-slate-400 font-mono">${escapeHtml(isoString)}</span>`;
+
+    const dateFormatted = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const timeFormatted = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+
+    return `
+      <div class="flex flex-col leading-tight">
+        <span class="font-bold text-slate-800 text-[11px] whitespace-nowrap flex items-center gap-1">
+          <i class="fa-regular fa-calendar text-[10px] text-slate-400"></i> ${dateFormatted}
+        </span>
+        <span class="text-[10px] text-slate-500 font-mono whitespace-nowrap flex items-center gap-1 mt-0.5">
+          <i class="fa-regular fa-clock text-[9px] text-[#0EA5E9]"></i> ${timeFormatted}
+        </span>
+      </div>
+    `;
   } catch (e) {
-    return '-';
+    return `<span class="text-slate-400 font-mono">${escapeHtml(isoString)}</span>`;
   }
+}
+
+function formatTime(isoString) {
+  return formatDateTime(isoString);
 }
 
 function escapeHtml(str) {

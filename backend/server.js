@@ -469,7 +469,8 @@ const server = http.createServer(async (req, res) => {
 
       const [existing] = await dbPool.query('SELECT * FROM equipment_items WHERE LOWER(asset_tag) = LOWER(?) LIMIT 1;', [asset_tag]);
       let targetItem = null;
-      const nowFormatted = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      const now = new Date();
+      const nowIso = now.toISOString();
 
       if (existing.length > 0) {
         targetItem = existing[0];
@@ -489,7 +490,7 @@ const server = http.createServer(async (req, res) => {
           statusToSet,
           locToSet,
           assignToSet,
-          nowFormatted,
+          now,
           scanned_by || 'Mobile Scanner',
           targetItem.item_id
         ]);
@@ -497,7 +498,7 @@ const server = http.createServer(async (req, res) => {
         targetItem.status = statusToSet;
         targetItem.location = locToSet;
         targetItem.assigned_to = assignToSet;
-        targetItem.last_scanned_at = nowFormatted;
+        targetItem.last_scanned_at = nowIso;
         targetItem.last_scanned_by = scanned_by || 'Mobile Scanner';
       }
 
@@ -509,8 +510,8 @@ const server = http.createServer(async (req, res) => {
         action_type: action_type || 'Audit Verify',
         scanned_by: scanned_by || 'Mobile Scanner',
         location: location || (targetItem ? targetItem.location : 'Unknown'),
-        remarks: remarks || '',
-        timestamp: nowFormatted
+        remarks: remarks || 'Verified via mobile barcode scanner',
+        timestamp: nowIso
       };
 
       await dbPool.query(`
@@ -524,7 +525,7 @@ const server = http.createServer(async (req, res) => {
         newLog.scanned_by,
         newLog.location,
         newLog.remarks,
-        newLog.timestamp
+        now
       ]);
 
       // Push real-time SSE update to Web Admin Panels
