@@ -1,287 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="@drawable/bg_splash_gradient">
+    android:background="@drawable/bg_splash_gradient"
+    android:padding="24dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:orientation="vertical"
-        android:gravity="center"
-        android:padding="24dp">
+        android:gravity="center">
 
-        <!-- Top Status & Server Host Bar -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="24dp">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@drawable/bg_badge_available"
-                android:paddingStart="10dp"
-                android:paddingEnd="12dp"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp">
-
-                <View
-                    android:layout_width="8dp"
-                    android:layout_height="8dp"
-                    android:background="@drawable/bg_badge_available"
-                    android:backgroundTint="@color/status_available"
-                    android:layout_marginEnd="6dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ONLINE &amp; READY"
-                    android:textSize="10sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/status_available" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <ImageView
-                android:id="@+id/btnServerSettings"
-                android:layout_width="38dp"
-                android:layout_height="38dp"
-                android:padding="9dp"
-                android:background="@drawable/bg_dialog"
-                android:src="@android:drawable/ic_menu_preferences"
-                app:tint="@color/text_secondary"
-                android:contentDescription="Server Settings" />
-        </LinearLayout>
-
-        <!-- Elevated Brand Logo Container -->
+        <!-- Elevated Brand Logo -->
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            app:cardCornerRadius="24dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            app:cardCornerRadius="28dp"
             app:cardElevation="6dp"
             app:strokeColor="#CBD5E1"
             app:strokeWidth="1dp"
             app:cardBackgroundColor="@color/card_surface"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="24dp">
 
             <ImageView
-                android:id="@+id/imgLoginLogo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/logo"
-                android:padding="12dp"
+                android:padding="16dp"
                 android:contentDescription="IT Inventory Logo"
                 android:scaleType="fitCenter" />
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- App Title & Slogan -->
+        <!-- Clean Title -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/app_name"
-            android:textSize="24sp"
+            android:textSize="26sp"
             android:textStyle="bold"
             android:textColor="@color/text_primary"
-            android:letterSpacing="-0.02" />
+            android:letterSpacing="-0.02"
+            android:layout_marginBottom="6dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mobile Scanner &amp; Hardware Audit Console"
+            android:text="IT Equipment Scanner &amp; Inventory Console"
             android:textSize="13sp"
             android:textColor="@color/text_secondary"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="40dp" />
 
-        <!-- Feature Highlights Card -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
-            app:strokeColor="@color/border_light"
-            app:strokeWidth="1dp"
-            app:cardBackgroundColor="@color/card_surface"
-            android:layout_marginBottom="20dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <!-- Feature 1 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp">
-
-                    <FrameLayout
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:background="@drawable/bg_badge_assigned"
-                        android:layout_marginEnd="12dp">
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_nav_scan"
-                            app:tint="@color/brand_primary" />
-                    </FrameLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Continuous QR &amp; Barcode Scanner"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/text_primary" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Verify tags with Try Again &amp; Completed confirmation"
-                            android:textSize="11sp"
-                            android:textColor="@color/text_secondary" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- Feature 2 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <FrameLayout
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:background="@drawable/bg_badge_available"
-                        android:layout_marginEnd="12dp">
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_check_circle"
-                            app:tint="@color/status_available" />
-                    </FrameLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="TiDB Cloud &amp; Offline Sync"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/text_primary" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Auto-queues mutations when offline and syncs on connect"
-                            android:textSize="11sp"
-                            android:textColor="@color/text_secondary" />
-                    </LinearLayout>
-                </LinearLayout>
-
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Staff Auditor Card (No password required) -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
-            app:strokeColor="@color/border_light"
-            app:strokeWidth="1dp"
-            app:cardBackgroundColor="@color/card_surface"
-            android:layout_marginBottom="24dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="AUDITOR / STAFF IDENTIFIER"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_secondary"
-                    android:letterSpacing="0.06"
-                    android:layout_marginBottom="6dp" />
-
-                <EditText
-                    android:id="@+id/etStaffName"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="@drawable/bg_edit_text"
-                    android:text="IT Field Staff"
-                    android:hint="e.g. Alex Mercer / IT Field Staff"
-                    android:inputType="textPersonName"
-                    android:textColor="@color/text_primary"
-                    android:textStyle="bold"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Scanned hardware will be logged under this name"
-                    android:textSize="10sp"
-                    android:textColor="@color/text_secondary"
-                    android:layout_marginTop="4dp" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Primary Action: Open Scanner Console -->
+        <!-- Prominent 'CLICK ME' Button -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnOpenScanner"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="OPEN SCANNER CONSOLE"
-            android:textSize="14sp"
+            android:id="@+id/btnClickMe"
+            android:layout_width="220dp"
+            android:layout_height="60dp"
+            android:text="CLICK ME"
+            android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/white"
+            android:letterSpacing="0.08"
             app:backgroundTint="@color/brand_primary"
-            app:cornerRadius="16dp"
-            app:elevation="4dp"
+            app:cornerRadius="18dp"
+            app:elevation="6dp"
             app:icon="@drawable/ic_nav_scan"
             app:iconGravity="textStart"
-            app:iconTint="@color/white"
-            android:layout_marginBottom="14dp" />
-
-        <!-- Host URL Display -->
-        <TextView
-            android:id="@+id/tvServerDisplay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Connected to: http://10.0.2.2:5000"
-            android:textSize="11sp"
-            android:textColor="@color/text_secondary"
-            android:gravity="center" />
+            app:iconPadding="10dp"
+            app:iconTint="@color/white" />
 
     </LinearLayout>
-</ScrollView>
+
+</RelativeLayout>

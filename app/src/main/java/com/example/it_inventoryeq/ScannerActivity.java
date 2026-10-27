@@ -1,17 +1,13 @@
 package com.example.it_inventoryeq;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,11 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.it_inventoryeq.database.LocalDatabaseHelper;
-import com.example.it_inventoryeq.models.EquipmentItem;
 import com.example.it_inventoryeq.models.User;
 import com.example.it_inventoryeq.network.ApiClient;
-import com.example.it_inventoryeq.network.OfflineSyncManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.JsonObject;
 import com.google.zxing.BarcodeFormat;
@@ -40,8 +33,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Camera Scanner Activity with ZXing Barcode & QR Decoding.
- * Features: Manual Tag Input fallback + Offline-first database query & queuing.
+ * High-Speed Continuous Barcode & QR Camera Scanner.
+ * Workflow: Detection -> [Try Again / Completed] -> Completed Auto-Saves to Database -> [OK] -> Resumes Next Scan!
  */
 public class ScannerActivity extends AppCompatActivity {
 
@@ -56,8 +49,6 @@ public class ScannerActivity extends AppCompatActivity {
     private boolean isProcessingScan = false;
 
     private ApiClient apiClient;
-    private LocalDatabaseHelper localDb;
-    private OfflineSyncManager syncManager;
     private User currentUser;
 
     @Override
@@ -66,8 +57,6 @@ public class ScannerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_scanner);
 
         apiClient = ApiClient.getInstance(this);
-        localDb = LocalDatabaseHelper.getInstance(this);
-        syncManager = OfflineSyncManager.getInstance();
         currentUser = apiClient.getSavedUser();
 
         barcodeView = findViewById(R.id.barcodeScannerView);
@@ -77,7 +66,7 @@ public class ScannerActivity extends AppCompatActivity {
 
         beepManager = new BeepManager(this);
 
-        // Configure Barcode Formats (QR Code, Barcode 128, 39, EAN, Data Matrix)
+        // Configure Barcode Formats (QR Code, Code 128, Code 39, EAN 13/8, Data Matrix)
         Collection<BarcodeFormat> formats = Arrays.asList(
                 BarcodeFormat.QR_CODE,
                 BarcodeFormat.CODE_128,
@@ -94,7 +83,7 @@ public class ScannerActivity extends AppCompatActivity {
         // Flashlight toggle
         btnToggleFlash.setOnClickListener(v -> toggleFlashlight());
 
-        // Manual Input button (incase camera fails or barcode is damaged)
+        // Manual Input button fallback
         btnScannerManualInput.setOnClickListener(v -> showManualInputDialog());
 
         // Check camera permission
@@ -141,7 +130,7 @@ public class ScannerActivity extends AppCompatActivity {
 
     /**
      * Confirmation prompt shown when a barcode/QR code is detected.
-     * Allows user to select "Completed" to view item details or "Try Again" to re-scan.
+     * User can select "Completed" (auto-saves to DB) or "Try Again" (resumes camera).
      */
     private void showScanConfirmationDialog(final String scannedCode) {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_scan_confirmation, null);
@@ -161,17 +150,67 @@ public class ScannerActivity extends AppCompatActivity {
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
 
+        // Action 1: Try Again -> resume scanning immediately
         btnTryAgain.setOnClickListener(v -> {
             dialog.dismiss();
             resumeScanning();
         });
 
+        // Action 2: Completed -> auto-save to cloud database then show "OK" for next scan
         btnCompleted.setOnClickListener(v -> {
             dialog.dismiss();
-            handleScannedAssetTag(scannedCode);
+            autoSaveAndConfirmNext(scannedCode);
         });
 
         dialog.show();
+    }
+
+    /**
+     * Auto-saves the scanned code directly to the cloud database with high speed,
+     * then prompts the user with "OK" to immediately scan the next equipment.
+     */
+    private void autoSaveAndConfirmNext(final String scannedCode) {
+        progressBar.setVisibility(View.VISIBLE);
+
+        String staffName = currentUser != null ? currentUser.getFullName() : "IT Field Staff";
+
+        JsonObject payload = new JsonObject();
+        payload.addProperty("asset_tag", scannedCode);
+        payload.addProperty("action_type", "Audit Verify");
+        payload.addProperty("scanned_by", staffName);
+        payload.addProperty("location", "Computer Laboratory 1");
+        payload.addProperty("remarks", "Auto-verified via mobile barcode scanner");
+
+        apiClient.submitScanLog(payload, new ApiClient.ApiCallback<JsonObject>() {
+            @Override
+            public void onSuccess(JsonObject result) {
+                progressBar.setVisibility(View.GONE);
+                showScanSuccessNextDialog(scannedCode, true, null);
+            }
+
+            @Override
+            public void onError(String error) {
+                progressBar.setVisibility(View.GONE);
+                showScanSuccessNextDialog(scannedCode, false, error);
+            }
+        });
+    }
+
+    /**
+     * Shows fast confirmation: "Saved to Database! Click OK to scan next item"
+     */
+    private void showScanSuccessNextDialog(String scannedCode, boolean success, String errorMsg) {
+        new AlertDialog.Builder(this)
+                .setTitle(success ? "Auto-Saved to Database!" : "Scan Recorded")
+                .setMessage(success
+                        ? "Asset Tag [" + scannedCode + "] successfully saved and synchronized.\n\nClick OK to scan next item."
+                        : "Asset Tag [" + scannedCode + "] recorded.\n(" + errorMsg + ")\n\nClick OK to continue scanning.")
+                .setPositiveButton("OK", (d, w) -> {
+                    d.dismiss();
+                    resumeScanning();
+                })
+                .setCancelable(false)
+                .show();
     }
 
     /**
@@ -188,13 +227,13 @@ public class ScannerActivity extends AppCompatActivity {
         input.setBackgroundResource(R.drawable.bg_edit_text);
 
         new AlertDialog.Builder(this)
-                .setTitle("Manual Asset Tag Entry")
-                .setMessage("Enter the equipment barcode / asset tag printed on the label:")
+                .setTitle("Manual Tag Entry")
+                .setMessage("Enter the barcode / asset tag to audit:")
                 .setView(input)
-                .setPositiveButton("Search & Audit", (d, w) -> {
+                .setPositiveButton("Save & Sync", (d, w) -> {
                     String tag = input.getText().toString().trim();
                     if (!tag.isEmpty()) {
-                        handleScannedAssetTag(tag);
+                        autoSaveAndConfirmNext(tag);
                     } else {
                         resumeScanning();
                     }
@@ -202,272 +241,6 @@ public class ScannerActivity extends AppCompatActivity {
                 .setNegativeButton("Cancel", (d, w) -> resumeScanning())
                 .setCancelable(false)
                 .show();
-    }
-
-    /**
-     * Query database for asset tag (Online or Offline SQLite Cache)
-     */
-    public void handleScannedAssetTag(String assetTag) {
-        progressBar.setVisibility(View.VISIBLE);
-        barcodeView.pause();
-
-        // Check if offline
-        if (!syncManager.isOnline(this)) {
-            progressBar.setVisibility(View.GONE);
-            EquipmentItem cachedItem = localDb.findEquipmentByTag(assetTag);
-            if (cachedItem != null) {
-                showExistingItemActionDialog(cachedItem, true);
-            } else {
-                showRegisterNewItemDialog(assetTag, true);
-            }
-            return;
-        }
-
-        // Online lookup with fallback to local SQLite cache
-        apiClient.getEquipmentByTag(assetTag, new ApiClient.ApiCallback<EquipmentItem>() {
-            @Override
-            public void onSuccess(EquipmentItem item) {
-                progressBar.setVisibility(View.GONE);
-                if (item != null) {
-                    localDb.upsertCachedEquipment(item);
-                    showExistingItemActionDialog(item, false);
-                } else {
-                    showRegisterNewItemDialog(assetTag, false);
-                }
-            }
-
-            @Override
-            public void onError(String message) {
-                progressBar.setVisibility(View.GONE);
-                // Network failed mid-request -> fallback to local SQLite cache
-                EquipmentItem cachedItem = localDb.findEquipmentByTag(assetTag);
-                if (cachedItem != null) {
-                    showExistingItemActionDialog(cachedItem, true);
-                } else {
-                    showRegisterNewItemDialog(assetTag, true);
-                }
-            }
-        });
-    }
-
-    /**
-     * Post-Scan Dialog: Existing Equipment Item Found
-     */
-    private void showExistingItemActionDialog(EquipmentItem item, boolean isOffline) {
-        View view = getLayoutInflater().inflate(R.layout.dialog_item_action, null);
-
-        TextView tvAssetTag = view.findViewById(R.id.dialogAssetTag);
-        TextView tvCurrentStatus = view.findViewById(R.id.dialogCurrentStatus);
-        TextView tvItemName = view.findViewById(R.id.dialogItemName);
-        TextView tvSerial = view.findViewById(R.id.dialogSerial);
-        TextView tvAssigned = view.findViewById(R.id.dialogAssigned);
-        Spinner spinnerAction = view.findViewById(R.id.spinnerActionType);
-        EditText etAssignedTo = view.findViewById(R.id.etDialogAssignedTo);
-        EditText etLocation = view.findViewById(R.id.etDialogLocation);
-        EditText etRemarks = view.findViewById(R.id.etDialogRemarks);
-        MaterialButton btnCancel = view.findViewById(R.id.btnDialogCancel);
-        MaterialButton btnSaveSync = view.findViewById(R.id.btnDialogSaveSync);
-
-        // Populate fields
-        tvAssetTag.setText(item.getAssetTag());
-        tvItemName.setText(item.getItemName());
-        tvCurrentStatus.setText(item.getStatus().toUpperCase());
-        tvSerial.setText("S/N: " + item.getSerialNumber() + " | Cat: " + item.getCategory());
-        tvAssigned.setText(item.getAssignedTo() != null && !item.getAssignedTo().isEmpty()
-                ? "Assigned to: " + item.getAssignedTo()
-                : "Currently: Unassigned / Storage");
-
-        etAssignedTo.setText(item.getAssignedTo());
-        etLocation.setText(item.getLocation());
-
-        if (isOffline) {
-            btnSaveSync.setText("Save to Offline Queue");
-        }
-
-        // Configure Action Spinner
-        String[] actions = new String[]{
-                "Audit Verify (Working / Available)",
-                "Check-Out / Assign (In Use)",
-                "Send to Maintenance",
-                "Report Defective / Non-working"
-        };
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, actions);
-        spinnerAction.setAdapter(adapter);
-
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setView(view)
-                .setCancelable(false)
-                .create();
-
-        btnCancel.setOnClickListener(v -> {
-            dialog.dismiss();
-            resumeScanning();
-        });
-
-        btnSaveSync.setOnClickListener(v -> {
-            int selectedPos = spinnerAction.getSelectedItemPosition();
-            String actionType = "Audit Verify";
-            String newStatus = "Available";
-
-            if (selectedPos == 1) {
-                actionType = "Check-Out / Assign";
-                newStatus = "Assigned";
-            } else if (selectedPos == 2) {
-                actionType = "Send to Maintenance";
-                newStatus = "Maintenance";
-            } else if (selectedPos == 3) {
-                actionType = "Report Defective";
-                newStatus = "Defective";
-            }
-
-            String updatedAssigned = etAssignedTo.getText().toString().trim();
-            String updatedLocation = etLocation.getText().toString().trim();
-            String remarks = etRemarks.getText().toString().trim();
-
-            if (updatedLocation.isEmpty()) {
-                updatedLocation = item.getLocation();
-            }
-
-            // Build atomic payload
-            JsonObject payload = new JsonObject();
-            payload.addProperty("asset_tag", item.getAssetTag());
-            payload.addProperty("item_name", item.getItemName());
-            payload.addProperty("category", item.getCategory());
-            payload.addProperty("serial_number", item.getSerialNumber());
-            payload.addProperty("action_type", actionType);
-            payload.addProperty("new_status", newStatus);
-            payload.addProperty("scanned_by", currentUser != null ? currentUser.getFullName() : "Mobile Scanner");
-            payload.addProperty("location", updatedLocation);
-            payload.addProperty("assigned_to", updatedAssigned);
-            payload.addProperty("remarks", remarks);
-
-            btnSaveSync.setEnabled(false);
-            btnSaveSync.setText("Saving...");
-
-            // Offline-first save: writes to server if online, or queues in local SQLite if offline!
-            syncManager.submitScanOrQueue(ScannerActivity.this, payload, new OfflineSyncManager.ScanActionCallback() {
-                @Override
-                public void onSuccess(boolean isOfflineQueued, String message) {
-                    dialog.dismiss();
-                    Toast.makeText(ScannerActivity.this, message, Toast.LENGTH_SHORT).show();
-
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra("scanned_asset_tag", item.getAssetTag());
-                    returnIntent.putExtra("is_offline", isOfflineQueued);
-                    setResult(Activity.RESULT_OK, returnIntent);
-                    finish();
-                }
-
-                @Override
-                public void onError(String error) {
-                    btnSaveSync.setEnabled(true);
-                    btnSaveSync.setText("Save & Sync to Web");
-                    Toast.makeText(ScannerActivity.this, "Error: " + error, Toast.LENGTH_LONG).show();
-                }
-            });
-        });
-
-        dialog.show();
-    }
-
-    /**
-     * Post-Scan Dialog: Item NOT in database -> Prompt to Register (Works Online & Offline!)
-     */
-    private void showRegisterNewItemDialog(String scannedAssetTag, boolean isOffline) {
-        View view = getLayoutInflater().inflate(R.layout.dialog_register_item, null);
-
-        TextView tvAssetTag = view.findViewById(R.id.tvNewAssetTag);
-        EditText etItemName = view.findViewById(R.id.etNewItemName);
-        Spinner spinnerCategory = view.findViewById(R.id.spinnerNewCategory);
-        Spinner spinnerStatus = view.findViewById(R.id.spinnerNewStatus);
-        EditText etSerial = view.findViewById(R.id.etNewSerial);
-        EditText etLocation = view.findViewById(R.id.etNewLocation);
-        EditText etAssignedTo = view.findViewById(R.id.etNewAssignedTo);
-        MaterialButton btnCancel = view.findViewById(R.id.btnNewCancel);
-        MaterialButton btnRegisterSync = view.findViewById(R.id.btnNewRegisterSync);
-
-        tvAssetTag.setText(scannedAssetTag);
-
-        if (isOffline) {
-            btnRegisterSync.setText("Queue Registration (Offline)");
-        }
-
-        // Categories
-        String[] categories = new String[]{"Laptop", "Desktop", "Monitor", "Network", "Peripheral"};
-        ArrayAdapter<String> catAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, categories);
-        spinnerCategory.setAdapter(catAdapter);
-
-        // Statuses
-        String[] statuses = new String[]{"Available", "Assigned", "Maintenance", "Defective"};
-        ArrayAdapter<String> statAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, statuses);
-        spinnerStatus.setAdapter(statAdapter);
-
-        etLocation.setText("IT Storage Room");
-
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setView(view)
-                .setCancelable(false)
-                .create();
-
-        btnCancel.setOnClickListener(v -> {
-            dialog.dismiss();
-            resumeScanning();
-        });
-
-        btnRegisterSync.setOnClickListener(v -> {
-            String name = etItemName.getText().toString().trim();
-            if (name.isEmpty()) {
-                etItemName.setError("Item name is required");
-                return;
-            }
-
-            String category = (String) spinnerCategory.getSelectedItem();
-            String status = (String) spinnerStatus.getSelectedItem();
-            String serial = etSerial.getText().toString().trim();
-            if (serial.isEmpty()) serial = "N/A";
-            String location = etLocation.getText().toString().trim();
-            if (location.isEmpty()) location = "IT Storage";
-            String assignedTo = etAssignedTo.getText().toString().trim();
-
-            JsonObject payload = new JsonObject();
-            payload.addProperty("asset_tag", scannedAssetTag);
-            payload.addProperty("item_name", name);
-            payload.addProperty("category", category);
-            payload.addProperty("serial_number", serial);
-            payload.addProperty("new_status", status);
-            payload.addProperty("location", location);
-            payload.addProperty("assigned_to", assignedTo);
-            payload.addProperty("action_type", "New Registration");
-            payload.addProperty("is_registration", true);
-            payload.addProperty("remarks", "Direct registration via Android scanner");
-            payload.addProperty("scanned_by", currentUser != null ? currentUser.getFullName() : "Mobile Scanner");
-
-            btnRegisterSync.setEnabled(false);
-            btnRegisterSync.setText("Registering...");
-
-            syncManager.submitScanOrQueue(ScannerActivity.this, payload, new OfflineSyncManager.ScanActionCallback() {
-                @Override
-                public void onSuccess(boolean isOfflineQueued, String message) {
-                    dialog.dismiss();
-                    Toast.makeText(ScannerActivity.this, message, Toast.LENGTH_SHORT).show();
-
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra("scanned_asset_tag", scannedAssetTag);
-                    returnIntent.putExtra("is_offline", isOfflineQueued);
-                    setResult(Activity.RESULT_OK, returnIntent);
-                    finish();
-                }
-
-                @Override
-                public void onError(String error) {
-                    btnRegisterSync.setEnabled(true);
-                    btnRegisterSync.setText("Register & Sync");
-                    Toast.makeText(ScannerActivity.this, "Registration Error: " + error, Toast.LENGTH_LONG).show();
-                }
-            });
-        });
-
-        dialog.show();
     }
 
     private void resumeScanning() {

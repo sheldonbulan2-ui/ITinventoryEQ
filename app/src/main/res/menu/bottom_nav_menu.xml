@@ -12,8 +12,4 @@
         android:id="@+id/nav_manual"
         android:icon="@drawable/ic_nav_manual"
         android:title="Manual" />
-    <item
-        android:id="@+id/nav_queue"
-        android:icon="@drawable/ic_nav_queue"
-        android:title="Offline Sync" />
 </menu>

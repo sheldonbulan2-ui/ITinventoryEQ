@@ -1,12 +1,7 @@
 package com.example.it_inventoryeq;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,14 +10,11 @@ import com.example.it_inventoryeq.network.ApiClient;
 import com.google.android.material.button.MaterialButton;
 
 /**
- * Modern Launch & Welcome Portal.
- * Instant access: Open Scanner Console without username/password restriction.
+ * Minimal & Modern Welcome Screen.
+ * Displays brand logo and a single "CLICK ME" button to launch the scanner console.
  */
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText etStaffName;
-    private MaterialButton btnOpenScanner;
-    private TextView tvServerDisplay;
     private ApiClient apiClient;
 
     @Override
@@ -32,70 +24,19 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
 
-        etStaffName = findViewById(R.id.etStaffName);
-        btnOpenScanner = findViewById(R.id.btnOpenScanner);
-        tvServerDisplay = findViewById(R.id.tvServerDisplay);
+        MaterialButton btnClickMe = findViewById(R.id.btnClickMe);
 
-        // Pre-fill existing user if available
-        User savedUser = apiClient.getSavedUser();
-        if (savedUser != null && savedUser.getFullName() != null && !savedUser.getFullName().isEmpty()) {
-            etStaffName.setText(savedUser.getFullName());
-        }
+        btnClickMe.setOnClickListener(v -> {
+            // Ensure default active auditor user is present
+            User user = apiClient.getSavedUser();
+            if (user == null) {
+                user = new User("usr_staff", "IT Field Staff", "staff@itinventory.local", "scanner");
+                apiClient.saveUser(user);
+            }
 
-        updateServerDisplay();
-
-        // Server Settings Quick Config
-        findViewById(R.id.btnServerSettings).setOnClickListener(v -> showServerSettingsDialog());
-
-        // Instant Launch into Main Dashboard
-        btnOpenScanner.setOnClickListener(v -> launchApp());
-    }
-
-    private void updateServerDisplay() {
-        if (tvServerDisplay != null) {
-            tvServerDisplay.setText("Backend: " + apiClient.getServerUrl());
-        }
-    }
-
-    private void launchApp() {
-        String staffName = etStaffName.getText().toString().trim();
-        if (staffName.isEmpty()) {
-            staffName = "IT Field Staff";
-        }
-
-        User user = new User("usr_staff_" + (System.currentTimeMillis() % 10000), staffName, "staff@itinventory.local", "scanner");
-        apiClient.saveUser(user);
-
-        Toast.makeText(this, "Welcome, " + staffName, Toast.LENGTH_SHORT).show();
-        navigateToMain();
-    }
-
-    private void navigateToMain() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
-    private void showServerSettingsDialog() {
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_server_settings, null);
-        final EditText etUrl = dialogView.findViewById(R.id.etServerUrlSetting);
-        etUrl.setText(apiClient.getServerUrl());
-
-        new AlertDialog.Builder(this)
-                .setTitle("Backend Server URL")
-                .setView(dialogView)
-                .setPositiveButton("Save", (d, w) -> {
-                    String newUrl = etUrl.getText().toString().trim();
-                    if (!newUrl.isEmpty()) {
-                        apiClient.setServerUrl(newUrl);
-                        updateServerDisplay();
-                        Toast.makeText(this, "Server URL updated", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .setNegativeButton("Reset Default", (d, w) -> {
-                    apiClient.setServerUrl(ApiClient.DEFAULT_EMULATOR_URL);
-                    updateServerDisplay();
-                })
-                .show();
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        });
     }
 }

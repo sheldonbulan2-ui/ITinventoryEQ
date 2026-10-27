@@ -212,6 +212,14 @@ public class ApiClient {
         });
     }
 
+    public void submitScanLog(JsonObject scanPayload, ApiCallback<JsonObject> callback) {
+        submitScan(scanPayload, callback);
+    }
+
+    public void getScanLogs(int limit, ApiCallback<List<ScanLog>> callback) {
+        getRecentScans(callback);
+    }
+
     /**
      * Fetch recent scan logs for the home feed
      */
