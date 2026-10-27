@@ -297,10 +297,49 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 400, { success: false, message: 'asset_tag and item_name are required' });
       }
 
-      // Check duplicate tag in TiDB
-      const [existing] = await dbPool.query('SELECT item_id FROM equipment_items WHERE LOWER(asset_tag) = LOWER(?) LIMIT 1;', [payload.asset_tag]);
+      // Check if tag already exists in TiDB
+      const [existing] = await dbPool.query('SELECT * FROM equipment_items WHERE LOWER(asset_tag) = LOWER(?) LIMIT 1;', [payload.asset_tag]);
       if (existing.length > 0) {
-        return sendJson(res, 409, { success: false, message: `Asset tag '${payload.asset_tag}' already exists` });
+        if (payload.upsert) {
+          const current = existing[0];
+          const updated = {
+            item_name: payload.item_name.trim(),
+            category: payload.category || current.category || 'Laptop',
+            serial_number: payload.serial_number !== undefined ? payload.serial_number : current.serial_number,
+            location: payload.location || current.location || 'Computer Laboratory 1',
+            status: payload.status || current.status || 'Available',
+            last_scanned_at: new Date(),
+            last_scanned_by: payload.last_scanned_by || 'Admin'
+          };
+
+          await dbPool.query(`
+            UPDATE equipment_items SET
+              item_name = ?,
+              category = ?,
+              serial_number = ?,
+              location = ?,
+              status = ?,
+              last_scanned_at = ?,
+              last_scanned_by = ?
+            WHERE item_id = ?;
+          `, [
+            updated.item_name,
+            updated.category,
+            updated.serial_number,
+            updated.location,
+            updated.status,
+            updated.last_scanned_at,
+            updated.last_scanned_by,
+            current.item_id
+          ]);
+
+          const [updatedRows] = await dbPool.query('SELECT * FROM equipment_items WHERE item_id = ?;', [current.item_id]);
+          const stats = await calculateStats();
+          broadcast('scan_update', { item: updatedRows[0], stats });
+          return sendJson(res, 200, { success: true, message: 'Equipment updated in catalog', item: updatedRows[0], updated: true });
+        } else {
+          return sendJson(res, 409, { success: false, message: `Asset tag '${payload.asset_tag}' already exists` });
+        }
       }
 
       const newItem = {
@@ -342,7 +381,7 @@ const server = http.createServer(async (req, res) => {
         scanned_by: newItem.last_scanned_by,
         location: newItem.location,
         remarks: 'Registered item into IT inventory catalog',
-        timestamp: new Date().toISOString().slice(0, 19).replace('T', ' ')
+        timestamp: new Date().toISOString()
       };
 
       await dbPool.query(`
@@ -356,7 +395,7 @@ const server = http.createServer(async (req, res) => {
         regLog.scanned_by,
         regLog.location,
         regLog.remarks,
-        regLog.timestamp
+        new Date()
       ]);
 
       const stats = await calculateStats();
@@ -500,6 +539,40 @@ const server = http.createServer(async (req, res) => {
         targetItem.assigned_to = assignToSet;
         targetItem.last_scanned_at = nowIso;
         targetItem.last_scanned_by = scanned_by || 'Mobile Scanner';
+      } else {
+        // Auto-register item into equipment_items catalog so no prior registration is needed
+        const autoItemId = `EQ-${Date.now().toString(36).toUpperCase()}`;
+        const autoName = payload.item_name || `Equipment (${asset_tag})`;
+        const autoCategory = payload.category || 'Hardware';
+        const autoLoc = location || 'Computer Laboratory 1';
+
+        await dbPool.query(`
+          INSERT INTO equipment_items 
+            (item_id, asset_tag, item_name, category, serial_number, status, location, last_scanned_at, last_scanned_by)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+        `, [
+          autoItemId,
+          asset_tag,
+          autoName,
+          autoCategory,
+          payload.serial_number || 'N/A',
+          new_status || 'Available',
+          autoLoc,
+          now,
+          scanned_by || 'Mobile Scanner'
+        ]);
+
+        targetItem = {
+          item_id: autoItemId,
+          asset_tag: asset_tag,
+          item_name: autoName,
+          category: autoCategory,
+          serial_number: payload.serial_number || 'N/A',
+          status: new_status || 'Available',
+          location: autoLoc,
+          last_scanned_at: nowIso,
+          last_scanned_by: scanned_by || 'Mobile Scanner'
+        };
       }
 
       // Record Scan Log in TiDB

@@ -705,22 +705,9 @@
 
           <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
             
-            <!-- Left Controls: Manual Input Fields & Quick Selector (5 cols) -->
+            <!-- Left Controls: Manual Input Fields (5 cols) -->
             <div class="md:col-span-5 space-y-4">
               
-              <!-- Quick pre-fill from inventory -->
-              <div>
-                <div class="flex items-center justify-between mb-1.5">
-                  <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">Quick Fill from Inventory (Optional)</label>
-                  <span class="text-[10px] text-slate-400">Auto-populates fields</span>
-                </div>
-                <select id="studioSelectEquipment" onchange="handleStudioSelectChange(event)" 
-                  class="w-full py-2 px-3 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#1E40AF] bg-slate-50/70 text-slate-700">
-                  <option value="">-- Or choose an existing item to pre-fill --</option>
-                  <!-- Injected via JS -->
-                </select>
-              </div>
-
               <!-- Manual Asset Tag Input (Primary) -->
               <div>
                 <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">
@@ -813,10 +800,16 @@
                 </p>
               </div>
 
-              <button onclick="printStudioSticker()" 
-                class="w-full bg-[#1E40AF] hover:bg-[#1E3A8A] text-white text-xs font-bold py-3 rounded-xl shadow-md transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-print"></i> Print This QR Sticker Now
-              </button>
+              <div class="flex flex-col sm:flex-row gap-2 pt-1">
+                <button type="button" onclick="saveStudioEquipmentToInventory(false)" 
+                  class="flex-1 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs font-bold py-3 rounded-xl shadow-xs transition flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-cloud-arrow-up text-[#1E40AF]"></i> Save to Catalog
+                </button>
+                <button type="button" onclick="saveStudioEquipmentToInventory(true)" 
+                  class="flex-1 bg-[#1E40AF] hover:bg-[#1E3A8A] text-white text-xs font-bold py-3 rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-print"></i> Save &amp; Print Sticker
+                </button>
+              </div>
             </div>
 
             <!-- Right Preview: Live Sticker Mockup (7 cols) -->

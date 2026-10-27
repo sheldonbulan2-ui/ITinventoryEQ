@@ -1002,45 +1002,64 @@ function printSticker() {
 // =============================================================================
 
 function initStudioDropdown() {
-  const select = document.getElementById('studioSelectEquipment');
-  if (!select) return;
-
-  const options = allEquipment.map(i => {
-    return `<option value="${i.item_id}">${i.asset_tag} - ${i.item_name} (${i.category})</option>`;
-  }).join('');
-
-  select.innerHTML = '<option value="">-- Or choose an existing item to pre-fill --</option>' + options;
-
   // Initial trigger from current manual fields
   handleStudioManualUpdate();
 }
 
-function handleStudioSelectChange(e) {
-  const itemId = e.target.value;
-  if (!itemId) return;
+async function saveStudioEquipmentToInventory(triggerPrint = false) {
+  const assetTag = (document.getElementById('studioManualTag')?.value || '').trim();
+  const itemName = (document.getElementById('studioManualName')?.value || '').trim();
+  const labName = (document.getElementById('studioManualLab')?.value || 'Computer Laboratory 1').trim();
+  const category = document.getElementById('studioManualCategory')?.value || 'Laptop';
+  const serial = (document.getElementById('studioManualSerial')?.value || '').trim();
+  const deskLoc = (document.getElementById('studioManualLoc')?.value || '').trim();
 
-  const item = allEquipment.find(i => i.item_id === itemId);
-  if (item) {
-    document.getElementById('studioManualTag').value = item.asset_tag;
-    document.getElementById('studioManualName').value = item.item_name;
-    document.getElementById('studioManualCategory').value = item.category || 'Laptop';
-    document.getElementById('studioManualSerial').value = item.serial_number || '';
-    
-    let labName = 'Computer Laboratory 1';
-    let deskLoc = item.location || 'Station 01';
-    if (item.location) {
-      if (item.location.toLowerCase().includes('lab') || 
-          item.location.toLowerCase().includes('room') || 
-          item.location.toLowerCase().includes('vault')) {
-        labName = item.location;
-      }
-    }
-    const labInput = document.getElementById('studioManualLab');
-    if (labInput) labInput.value = labName;
-    document.getElementById('studioManualLoc').value = deskLoc;
-    
-    handleStudioManualUpdate();
+  if (!assetTag || !itemName) {
+    alert('Please enter both Asset Tag and Equipment Item Name.');
+    return;
   }
+
+  const fullLocation = deskLoc ? `${labName} - ${deskLoc}` : labName;
+
+  try {
+    const res = await fetch('/api/equipment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        asset_tag: assetTag,
+        item_name: itemName,
+        category: category,
+        serial_number: serial || 'N/A',
+        location: fullLocation,
+        status: 'Available',
+        upsert: true
+      })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      showToast(`Saved to Admin Catalog: ${itemName} [${assetTag}]`);
+      if (data.item) {
+        updateEquipmentInState(data.item);
+      }
+      refreshStats();
+
+      if (triggerPrint) {
+        window.print();
+      }
+    } else {
+      alert('Could not save equipment: ' + data.message);
+    }
+  } catch (err) {
+    console.error('Save error:', err);
+    if (triggerPrint) {
+      window.print();
+    }
+  }
+}
+
+function printStudioSticker() {
+  saveStudioEquipmentToInventory(true);
 }
 
 function handleStudioManualUpdate() {
@@ -1091,10 +1110,6 @@ function renderStudioPreview(item) {
       correctLevel: QRCode.CorrectLevel.H
     });
   }
-}
-
-function printStudioSticker() {
-  window.print();
 }
 
 // =============================================================================
