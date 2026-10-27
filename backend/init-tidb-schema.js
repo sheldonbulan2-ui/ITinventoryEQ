@@ -83,6 +83,14 @@ async function initTiDBSchema() {
   `);
   console.log('[TiDB] Table `scan_logs` checked/created.');
 
+  // High-performance query indexes
+  try {
+    await connection.query('CREATE INDEX IF NOT EXISTS idx_equip_status ON equipment_items (status);');
+    await connection.query('CREATE INDEX IF NOT EXISTS idx_logs_timestamp ON scan_logs (timestamp);');
+  } catch (idxErr) {
+    // Index already exists
+  }
+
   // Seed default official admin (IToffice / IToffice) and scanner users
   await connection.query(`
     INSERT INTO users (user_id, full_name, email, password, role)

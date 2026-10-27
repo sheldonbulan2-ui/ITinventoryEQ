@@ -565,7 +565,7 @@
               <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 pointer-events-none text-xs">
                 <i class="fa-solid fa-magnifying-glass"></i>
               </span>
-              <input type="text" id="inventorySearchInput" oninput="applyFilters()" 
+              <input type="text" id="inventorySearchInput" oninput="debouncedApplyFilters()" 
                 placeholder="Filter by Tag, Name, S/N, Location, or Staff..." 
                 class="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#1E40AF] bg-slate-50/50">
             </div>
@@ -1156,6 +1156,50 @@
           </button>
         </div>
       </form>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: MODERN IN-SYSTEM CONFIRM DELETE DIALOG -->
+  <!-- ========================================================================= -->
+  <div id="deleteConfirmModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full border border-slate-100 text-center animate-in fade-in zoom-in-95 duration-150">
+      
+      <!-- Red Warning Icon with Pulsing Background -->
+      <div class="w-14 h-14 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4 ring-8 ring-red-50">
+        <i class="fa-solid fa-trash-can text-xl"></i>
+      </div>
+
+      <h3 class="text-base font-bold text-[#0F172A] tracking-tight mb-1">Delete Equipment?</h3>
+      <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+        Are you sure you want to permanently delete this item from the catalog and database?
+      </p>
+
+      <!-- Target Item Card Preview -->
+      <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 mb-5 text-left space-y-1.5">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Asset Tag</span>
+          <span class="asset-tag-pill font-mono font-bold text-[11px]" id="deleteModalTag">IT-LAP-001</span>
+        </div>
+        <div class="text-xs font-bold text-slate-800 truncate" id="deleteModalName">Dell Latitude 5420</div>
+        <div class="text-[11px] text-slate-500 flex items-center gap-1 truncate">
+          <i class="fa-solid fa-location-dot text-slate-400 text-[10px]"></i>
+          <span id="deleteModalLocation">Computer Laboratory 1</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="grid grid-cols-2 gap-3">
+        <button type="button" onclick="closeDeleteConfirmModal()" 
+          class="w-full py-2.5 px-4 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 font-semibold text-xs transition">
+          Cancel
+        </button>
+        <button type="button" id="btnConfirmDeleteAction" onclick="executeConfirmedDelete()" 
+          class="w-full py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-trash-can"></i> Delete
+        </button>
+      </div>
 
     </div>
   </div>

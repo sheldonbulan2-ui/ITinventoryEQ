@@ -108,6 +108,7 @@ function initKeyboardShortcuts() {
       closeModal('equipmentModal');
       closeModal('qrModal');
       closeModal('changePasswordModal');
+      closeDeleteConfirmModal();
     }
   });
 }
@@ -676,6 +677,12 @@ function getActionBadge(action) {
 // MASTER EQUIPMENT INVENTORY TABLE & PAGINATION
 // =============================================================================
 
+let filterDebounceTimer = null;
+function debouncedApplyFilters() {
+  clearTimeout(filterDebounceTimer);
+  filterDebounceTimer = setTimeout(applyFilters, 120);
+}
+
 function applyFilters() {
   currentFilter.search = (document.getElementById('inventorySearchInput').value || '').toLowerCase().trim();
   currentFilter.category = document.getElementById('categoryFilter').value;
@@ -913,25 +920,55 @@ async function handleSaveEquipment(e) {
   }
 }
 
-async function deleteEquipment(itemId, assetTag) {
-  if (!confirm(`Are you sure you want to permanently delete equipment item [${assetTag}]?`)) {
-    return;
-  }
+let pendingDeleteId = null;
+let pendingDeleteTag = null;
+
+function deleteEquipment(itemId, assetTag) {
+  pendingDeleteId = itemId;
+  pendingDeleteTag = assetTag;
+
+  const item = allEquipment ? allEquipment.find(i => i.item_id === itemId || i.asset_tag === assetTag) : null;
+  const tagEl = document.getElementById('deleteModalTag');
+  const nameEl = document.getElementById('deleteModalName');
+  const locEl = document.getElementById('deleteModalLocation');
+
+  if (tagEl) tagEl.textContent = assetTag;
+  if (nameEl) nameEl.textContent = item ? item.item_name : 'IT Equipment Item';
+  if (locEl) locEl.textContent = item ? item.location : 'Computer Laboratory 1';
+
+  const modal = document.getElementById('deleteConfirmModal');
+  if (modal) modal.classList.remove('hidden');
+}
+
+function closeDeleteConfirmModal() {
+  const modal = document.getElementById('deleteConfirmModal');
+  if (modal) modal.classList.add('hidden');
+  pendingDeleteId = null;
+  pendingDeleteTag = null;
+}
+
+async function executeConfirmedDelete() {
+  if (!pendingDeleteId) return;
+
+  const itemId = pendingDeleteId;
+  const assetTag = pendingDeleteTag;
+  closeDeleteConfirmModal();
+
+  // Optimistic UI Update: 0ms instant response
+  allEquipment = allEquipment.filter(i => i.item_id !== itemId && i.asset_tag !== assetTag);
+  renderInventoryTable();
+  renderCategoryDistribution();
+  refreshStats();
+  showToast(`Deleted ${assetTag}`);
 
   try {
     const res = await fetch(`/api/equipment/${itemId}`, { method: 'DELETE' });
     const data = await res.json();
-    if (data.success) {
-      showToast(`Deleted ${assetTag}`);
-      allEquipment = allEquipment.filter(i => i.item_id !== itemId);
-      renderInventoryTable();
-      renderCategoryDistribution();
-      refreshStats();
-    } else {
-      alert('Error: ' + data.message);
+    if (!data.success) {
+      console.warn('Delete warning:', data.message);
     }
   } catch (err) {
-    alert('Failed to delete item: ' + err.message);
+    console.error('Delete network error:', err);
   }
 }
 

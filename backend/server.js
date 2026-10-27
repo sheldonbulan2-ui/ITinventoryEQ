@@ -97,21 +97,22 @@ const MIME_TYPES = {
 // Calculate summary stats from TiDB
 async function calculateStats() {
   try {
-    const [counts] = await dbPool.query(`
-      SELECT 
-        COUNT(*) as total,
-        SUM(CASE WHEN status = 'Available' THEN 1 ELSE 0 END) as available,
-        SUM(CASE WHEN status = 'Assigned' THEN 1 ELSE 0 END) as assigned,
-        SUM(CASE WHEN status = 'Maintenance' THEN 1 ELSE 0 END) as maintenance,
-        SUM(CASE WHEN status = 'Defective' THEN 1 ELSE 0 END) as defective
-      FROM equipment_items;
-    `);
-
-    const [todayCount] = await dbPool.query(`
-      SELECT COUNT(*) as scanned_today 
-      FROM scan_logs 
-      WHERE DATE(timestamp) = CURRENT_DATE();
-    `);
+    const [[counts], [todayCount]] = await Promise.all([
+      dbPool.query(`
+        SELECT 
+          COUNT(*) as total,
+          SUM(CASE WHEN status = 'Available' THEN 1 ELSE 0 END) as available,
+          SUM(CASE WHEN status = 'Assigned' THEN 1 ELSE 0 END) as assigned,
+          SUM(CASE WHEN status = 'Maintenance' THEN 1 ELSE 0 END) as maintenance,
+          SUM(CASE WHEN status = 'Defective' THEN 1 ELSE 0 END) as defective
+        FROM equipment_items;
+      `),
+      dbPool.query(`
+        SELECT COUNT(*) as scanned_today 
+        FROM scan_logs 
+        WHERE DATE(timestamp) = CURRENT_DATE();
+      `)
+    ]);
 
     const row = counts[0] || {};
     return {
@@ -633,7 +634,13 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(404, { 'Content-Type': 'text/plain' });
       return res.end('404 Not Found');
     }
-    res.writeHead(200, { 'Content-Type': contentType });
+    const isStaticAsset = ext === '.css' || ext === '.js' || ext === '.png' || ext === '.jpg' || ext === '.svg' || ext === '.ico';
+    const headers = {
+      'Content-Type': contentType,
+      'Cache-Control': isStaticAsset ? 'public, max-age=86400, stale-while-revalidate=604800' : 'no-cache, must-revalidate',
+      'X-Content-Type-Options': 'nosniff'
+    };
+    res.writeHead(200, headers);
     res.end(content);
   });
 });
