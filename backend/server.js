@@ -172,10 +172,11 @@ const server = http.createServer(async (req, res) => {
   // ==========================================
   if (pathname === '/api/auth/login' && method === 'POST') {
     try {
-      const { email, password } = await parseBody(req);
+      const { email, username, password } = await parseBody(req);
+      const userIdentifier = (username || email || '').trim();
       const [rows] = await dbPool.query(
-        'SELECT user_id, full_name, email, role FROM users WHERE LOWER(email) = LOWER(?) AND password = ? LIMIT 1;',
-        [email || '', password || '']
+        'SELECT user_id, full_name, email, role FROM users WHERE (LOWER(email) = LOWER(?) OR LOWER(user_id) = LOWER(?)) AND password = ? LIMIT 1;',
+        [userIdentifier, userIdentifier, password || '']
       );
 
       if (rows.length > 0) {

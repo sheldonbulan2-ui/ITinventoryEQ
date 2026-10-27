@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="@color/background">
+    android:background="@drawable/bg_splash_gradient">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,33 +13,79 @@
         android:gravity="center"
         android:padding="24dp">
 
-        <!-- Top Server Host Quick-Config Icon -->
+        <!-- Top Status & Server Host Bar -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="end"
-            android:layout_marginBottom="16dp">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="24dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_badge_available"
+                android:paddingStart="10dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
+
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/bg_badge_available"
+                    android:backgroundTint="@color/status_available"
+                    android:layout_marginEnd="6dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ONLINE &amp; READY"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/status_available" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
             <ImageView
                 android:id="@+id/btnServerSettings"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:padding="8dp"
-                android:background="@drawable/bg_asset_tag_pill"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:padding="9dp"
+                android:background="@drawable/bg_dialog"
                 android:src="@android:drawable/ic_menu_preferences"
                 app:tint="@color/text_secondary"
                 android:contentDescription="Server Settings" />
         </LinearLayout>
 
-        <!-- Unified Single Brand Logo Asset -->
-        <ImageView
-            android:id="@+id/imgLoginLogo"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:src="@drawable/logo"
-            android:contentDescription="IT Inventory Logo"
-            android:scaleType="fitCenter"
-            android:layout_marginBottom="16dp" />
+        <!-- Elevated Brand Logo Container -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="6dp"
+            app:strokeColor="#CBD5E1"
+            app:strokeWidth="1dp"
+            app:cardBackgroundColor="@color/card_surface"
+            android:layout_marginBottom="16dp">
 
+            <ImageView
+                android:id="@+id/imgLoginLogo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/logo"
+                android:padding="12dp"
+                android:contentDescription="IT Inventory Logo"
+                android:scaleType="fitCenter" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- App Title & Slogan -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,111 +98,182 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/sign_in_title"
-            android:textSize="14sp"
+            android:text="Mobile Scanner &amp; Hardware Audit Console"
+            android:textSize="13sp"
             android:textColor="@color/text_secondary"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="28dp" />
+            android:layout_marginBottom="24dp" />
 
-        <!-- Login Container Card (12dp corner radius) -->
+        <!-- Feature Highlights Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
+            app:cardCornerRadius="16dp"
             app:cardElevation="2dp"
             app:strokeColor="@color/border_light"
             app:strokeWidth="1dp"
-            app:cardBackgroundColor="@color/card_surface">
+            app:cardBackgroundColor="@color/card_surface"
+            android:layout_marginBottom="20dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="16dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <!-- Feature 1 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="EMAIL ADDRESS"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_secondary"
-                    android:letterSpacing="0.05"
-                    android:layout_marginBottom="6dp" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
 
-                <EditText
-                    android:id="@+id/etEmail"
+                    <FrameLayout
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_badge_assigned"
+                        android:layout_marginEnd="12dp">
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_nav_scan"
+                            app:tint="@color/brand_primary" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Continuous QR &amp; Barcode Scanner"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Verify tags with Try Again &amp; Completed confirmation"
+                            android:textSize="11sp"
+                            android:textColor="@color/text_secondary" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Feature 2 -->
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="@drawable/bg_edit_text"
-                    android:hint="scanner@itinventory.com"
-                    android:inputType="textEmailAddress"
-                    android:textColor="@color/text_primary"
-                    android:textColorHint="#94A3B8"
-                    android:textSize="14sp"
-                    android:layout_marginBottom="16dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="PASSWORD"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_secondary"
-                    android:letterSpacing="0.05"
-                    android:layout_marginBottom="6dp" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
-                <EditText
-                    android:id="@+id/etPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="@drawable/bg_edit_text"
-                    android:hint="••••••••"
-                    android:inputType="textPassword"
-                    android:textColor="@color/text_primary"
-                    android:textColorHint="#94A3B8"
-                    android:textSize="14sp"
-                    android:layout_marginBottom="20dp" />
+                    <FrameLayout
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_badge_available"
+                        android:layout_marginEnd="12dp">
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_check_circle"
+                            app:tint="@color/status_available" />
+                    </FrameLayout>
 
-                <!-- Sign In Button (12dp rounded corners + #1E40AF) -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnLogin"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:text="@string/btn_login"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/white"
-                    app:backgroundTint="@color/primary"
-                    app:cornerRadius="12dp"
-                    android:layout_marginBottom="12dp" />
-
-                <!-- 1-Click Demo Account Filler -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnFillDemo"
-                    android:layout_width="match_parent"
-                    android:layout_height="44dp"
-                    android:text="@string/btn_fill_demo"
-                    android:textSize="12sp"
-                    android:textColor="@color/primary"
-                    app:strokeColor="@color/primary"
-                    app:strokeWidth="1dp"
-                    app:backgroundTint="@color/card_surface"
-                    app:cornerRadius="12dp"
-                    style="@style/Widget.Material3.Button.OutlinedButton" />
-
-                <ProgressBar
-                    android:id="@+id/loginProgressBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:indeterminateTint="@color/primary"
-                    android:visibility="gone"
-                    android:layout_marginTop="12dp" />
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="TiDB Cloud &amp; Offline Sync"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Auto-queues mutations when offline and syncs on connect"
+                            android:textSize="11sp"
+                            android:textColor="@color/text_secondary" />
+                    </LinearLayout>
+                </LinearLayout>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Staff Auditor Card (No password required) -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:strokeColor="@color/border_light"
+            app:strokeWidth="1dp"
+            app:cardBackgroundColor="@color/card_surface"
+            android:layout_marginBottom="24dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="AUDITOR / STAFF IDENTIFIER"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_secondary"
+                    android:letterSpacing="0.06"
+                    android:layout_marginBottom="6dp" />
+
+                <EditText
+                    android:id="@+id/etStaffName"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_edit_text"
+                    android:text="IT Field Staff"
+                    android:hint="e.g. Alex Mercer / IT Field Staff"
+                    android:inputType="textPersonName"
+                    android:textColor="@color/text_primary"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Scanned hardware will be logged under this name"
+                    android:textSize="10sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Primary Action: Open Scanner Console -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnOpenScanner"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="OPEN SCANNER CONSOLE"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/brand_primary"
+            app:cornerRadius="16dp"
+            app:elevation="4dp"
+            app:icon="@drawable/ic_nav_scan"
+            app:iconGravity="textStart"
+            app:iconTint="@color/white"
+            android:layout_marginBottom="14dp" />
+
+        <!-- Host URL Display -->
         <TextView
             android:id="@+id/tvServerDisplay"
             android:layout_width="wrap_content"
@@ -164,7 +281,7 @@
             android:text="Connected to: http://10.0.2.2:5000"
             android:textSize="11sp"
             android:textColor="@color/text_secondary"
-            android:layout_marginTop="24dp" />
+            android:gravity="center" />
 
     </LinearLayout>
 </ScrollView>
