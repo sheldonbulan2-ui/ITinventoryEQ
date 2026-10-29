@@ -66,7 +66,7 @@
                             android:text="FIELD SCANNER &amp; AUDIT"
                             android:textSize="9sp"
                             android:textStyle="bold"
-                            android:textColor="#93C5FD"
+                            android:textColor="#FCA5A5"
                             android:letterSpacing="0.05" />
                     </LinearLayout>
                 </LinearLayout>
@@ -120,7 +120,7 @@
                         android:layout_height="wrap_content"
                         android:text="● Online &amp; Synchronized"
                         android:textSize="11sp"
-                        android:textColor="#38BDF8"
+                        android:textColor="#4ADE80"
                         android:layout_marginTop="2dp" />
                 </LinearLayout>
 
@@ -151,7 +151,7 @@
                         android:text="TODAY"
                         android:textSize="8sp"
                         android:textStyle="bold"
-                        android:textColor="#BFDBFE" />
+                        android:textColor="#FECACA" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -184,7 +184,7 @@
                     android:layout_marginBottom="10dp"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="2dp"
-                    app:strokeColor="#BAE6FD"
+                    app:strokeColor="@color/border_light"
                     app:strokeWidth="1.5dp"
                     app:cardBackgroundColor="@color/card_surface">
 

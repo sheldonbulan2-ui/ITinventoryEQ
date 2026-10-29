@@ -1,36 +1,39 @@
 /* ==========================================================================
-   IT Equipment Inventory System - Modern Enterprise Admin UI
-   Brand Theme: #1E40AF (Primary Tech Blue), #0EA5E9 (Sky Blue Accent)
-   Surface: #F8FAFC (Light Slate), Card: #FFFFFF (Pure White), Text: #0F172A
+   IT Equipment Inventory System - Modern Cyber Red & Black Enterprise UI
+   Brand Theme: #DC2626 (Crimson Red), #EF4444 (Vibrant Red Accent)
+   Surfaces: #09090B (Deep Obsidian), #121216 (Dark Carbon), #1C1C22 (Elevated)
+   Borders: #27272A (Zinc), Text: #FAFAFA (Crisp White), #A1A1AA (Muted Zinc)
    ========================================================================== */
 
 :root {
-  --color-primary: #1E40AF;
-  --color-primary-dark: #1E3A8A;
-  --color-primary-light: #3B82F6;
-  --color-accent: #0EA5E9;
-  --color-accent-hover: #0284C7;
-  --color-accent-soft: rgba(14, 165, 233, 0.1);
-  --color-bg-surface: #F8FAFC;
-  --color-card-surface: #FFFFFF;
-  --color-text-primary: #0F172A;
-  --color-text-secondary: #475569;
-  --color-text-muted: #94A3B8;
-  --color-border: #E2E8F0;
-  --color-border-subtle: #F1F5F9;
+  --color-primary: #DC2626;
+  --color-primary-dark: #991B1B;
+  --color-primary-light: #EF4444;
+  --color-accent: #EF4444;
+  --color-accent-hover: #F87171;
+  --color-accent-soft: rgba(239, 68, 68, 0.15);
+  
+  --color-bg-surface: #09090B;
+  --color-card-surface: #121216;
+  --color-card-elevated: #18181F;
+  --color-text-primary: #FAFAFA;
+  --color-text-secondary: #A1A1AA;
+  --color-text-muted: #71717A;
+  --color-border: #27272E;
+  --color-border-subtle: #1F1F24;
 
-  /* Status Colors */
-  --status-available: #16A34A;
-  --status-available-bg: #DCFCE7;
-  --status-assigned: #2563EB;
-  --status-assigned-bg: #DBEAFE;
-  --status-maintenance: #D97706;
-  --status-maintenance-bg: #FEF3C7;
-  --status-defective: #DC2626;
-  --status-defective-bg: #FEE2E2;
+  /* High-Tech Status Badges */
+  --status-available: #10B981;
+  --status-available-bg: rgba(16, 185, 129, 0.15);
+  --status-assigned: #EF4444;
+  --status-assigned-bg: rgba(239, 68, 68, 0.15);
+  --status-maintenance: #F59E0B;
+  --status-maintenance-bg: rgba(245, 158, 11, 0.15);
+  --status-defective: #F43F5E;
+  --status-defective-bg: rgba(244, 63, 94, 0.18);
 
-  --radius-xl: 12px;
-  --radius-lg: 8px;
+  --radius-xl: 14px;
+  --radius-lg: 10px;
   --radius-pill: 9999px;
 
   --sidebar-width: 260px;
@@ -52,20 +55,20 @@ body {
   overflow-x: hidden;
 }
 
-/* Custom Scrollbars */
+/* Custom Red & Black Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #09090B;
 }
 ::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
+  background: #27272E;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
+  background: #DC2626;
 }
 
 /* Sidebar Styling & Transitions */
@@ -81,25 +84,29 @@ body {
   border-radius: var(--radius-xl);
   font-size: 0.825rem;
   font-weight: 500;
-  color: #475569;
-  transition: all 0.15s ease-in-out;
+  color: #A1A1AA;
+  transition: all 0.18s ease-in-out;
   cursor: pointer;
   user-select: none;
+  border: 1px solid transparent;
 }
 
 .nav-link:hover {
-  background-color: #F1F5F9;
-  color: #1E40AF;
+  background-color: #1A1A22;
+  color: #FAFAFA;
+  border-color: rgba(239, 68, 68, 0.2);
 }
 
 .nav-link.active {
-  background-color: #EFF6FF;
-  color: #1E40AF;
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.2) 0%, rgba(153, 27, 27, 0.1) 100%);
+  color: #EF4444;
   font-weight: 600;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  box-shadow: 0 0 15px rgba(220, 38, 38, 0.15);
 }
 
 .nav-link.active .nav-icon {
-  color: #1E40AF;
+  color: #EF4444;
 }
 
 /* Status Badges (Pills) */
@@ -107,19 +114,19 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 10px;
+  padding: 4px 10px;
   border-radius: var(--radius-pill);
   font-size: 0.725rem;
-  font-weight: 600;
-  letter-spacing: 0.025em;
+  font-weight: 700;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
   white-space: nowrap;
 }
 
 .badge-available {
   background-color: var(--status-available-bg);
-  color: var(--status-available);
-  border: 1px solid rgba(22, 163, 74, 0.3);
+  color: #34D399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
 }
 .badge-available::before {
   content: '';
@@ -127,13 +134,14 @@ body {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: var(--status-available);
+  background-color: #10B981;
+  box-shadow: 0 0 8px #10B981;
 }
 
 .badge-assigned {
   background-color: var(--status-assigned-bg);
-  color: var(--status-assigned);
-  border: 1px solid rgba(37, 99, 235, 0.3);
+  color: #F87171;
+  border: 1px solid rgba(239, 68, 68, 0.35);
 }
 .badge-assigned::before {
   content: '';
@@ -141,13 +149,14 @@ body {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: var(--status-assigned);
+  background-color: #EF4444;
+  box-shadow: 0 0 8px #EF4444;
 }
 
 .badge-maintenance {
   background-color: var(--status-maintenance-bg);
-  color: var(--status-maintenance);
-  border: 1px solid rgba(217, 119, 6, 0.3);
+  color: #FBBF24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
 }
 .badge-maintenance::before {
   content: '';
@@ -155,13 +164,14 @@ body {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: var(--status-maintenance);
+  background-color: #F59E0B;
+  box-shadow: 0 0 8px #F59E0B;
 }
 
 .badge-defective {
   background-color: var(--status-defective-bg);
-  color: var(--status-defective);
-  border: 1px solid rgba(220, 38, 38, 0.3);
+  color: #FB7185;
+  border: 1px solid rgba(244, 63, 94, 0.4);
 }
 .badge-defective::before {
   content: '';
@@ -169,14 +179,15 @@ body {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: var(--status-defective);
+  background-color: #F43F5E;
+  box-shadow: 0 0 8px #F43F5E;
 }
 
 /* Category Badge */
 .badge-category {
-  background-color: #F8FAFC;
-  color: #334155;
-  border: 1px solid #E2E8F0;
+  background-color: #18181F;
+  color: #E4E4E7;
+  border: 1px solid #27272E;
   border-radius: 6px;
   padding: 3px 8px;
   font-size: 0.75rem;
@@ -188,30 +199,34 @@ body {
 
 /* Action Type Badges */
 .badge-action-audit {
-  background-color: #E0F2FE;
-  color: #0369A1;
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #F87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 .badge-action-assign {
-  background-color: #EFF6FF;
-  color: #1D4ED8;
+  background-color: rgba(220, 38, 38, 0.2);
+  color: #FCA5A5;
+  border: 1px solid rgba(220, 38, 38, 0.35);
 }
 .badge-action-defective {
-  background-color: #FEE2E2;
-  color: #B91C1C;
+  background-color: rgba(244, 63, 94, 0.2);
+  color: #FDA4AF;
+  border: 1px solid rgba(244, 63, 94, 0.4);
 }
 .badge-action-reg {
-  background-color: #F0FDF4;
-  color: #15803D;
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #6EE7B7;
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 /* Pulse animation for newly synchronized scan */
 @keyframes rowPulse {
   0% {
-    background-color: rgba(14, 165, 233, 0.25);
+    background-color: rgba(220, 38, 38, 0.35);
     transform: scale(1.002);
   }
   50% {
-    background-color: rgba(14, 165, 233, 0.12);
+    background-color: rgba(220, 38, 38, 0.15);
   }
   100% {
     background-color: transparent;
@@ -223,16 +238,16 @@ body {
   animation: rowPulse 2.8s ease-out;
 }
 
-/* Live indicator dot with glowing ripple */
-@keyframes liveDotGlow {
+/* Live indicator dot with glowing ripple in Red */
+@keyframes liveDotGlowRed {
   0% {
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8);
   }
   70% {
-    box-shadow: 0 0 0 7px rgba(34, 197, 94, 0);
+    box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
   }
 }
 
@@ -240,9 +255,9 @@ body {
   display: inline-block;
   width: 8px;
   height: 8px;
-  background-color: #22C55E;
+  background-color: #EF4444;
   border-radius: 50%;
-  animation: liveDotGlow 1.8s infinite;
+  animation: liveDotGlowRed 1.8s infinite;
 }
 
 /* Asset Tag Pill */
@@ -250,32 +265,45 @@ body {
   font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
   font-size: 0.8rem;
   font-weight: 700;
-  padding: 3px 8px;
-  background-color: #F8FAFC;
-  border: 1px solid #CBD5E1;
+  padding: 3px 9px;
+  background-color: #18181E;
+  border: 1px solid #3F3F46;
   border-radius: 6px;
-  color: #1E293B;
+  color: #EF4444;
   display: inline-flex;
   align-items: center;
   gap: 5px;
   letter-spacing: -0.01em;
 }
 
-/* Modern Card Hover */
+/* Modern Cyber Card */
 .modern-card {
-  background-color: #FFFFFF;
-  border: 1px solid #E2E8F0;
+  background-color: #121216;
+  border: 1px solid #27272E;
   border-radius: var(--radius-xl);
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .modern-card:hover {
-  box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.08);
-  border-color: #CBD5E1;
+  box-shadow: 0 8px 30px -4px rgba(220, 38, 38, 0.12);
+  border-color: rgba(220, 38, 38, 0.35);
 }
 
-/* Print Styles for QR Asset Sticker */
+/* Cyber Glow Buttons */
+.btn-cyber-red {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 50%, #B91C1C 100%);
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px 0 rgba(220, 38, 38, 0.4);
+  transition: all 0.2s ease;
+}
+.btn-cyber-red:hover {
+  background: linear-gradient(135deg, #F87171 0%, #EF4444 50%, #DC2626 100%);
+  box-shadow: 0 6px 20px 0 rgba(239, 68, 68, 0.6);
+  transform: translateY(-1px);
+}
+
+/* Print Styles for QR Asset Sticker (Retains Pure White for Crisp Thermal/Inkjet Print) */
 @media print {
   body * {
     visibility: hidden;
@@ -302,7 +330,7 @@ body {
 .sticker-box {
   width: 3.5in;
   min-height: 2.1in;
-  border: 2px dashed #0F172A;
+  border: 2px dashed #DC2626;
   border-radius: 10px;
   padding: 14px;
   background-color: #FFFFFF;

@@ -1,36 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Unified Brand Palette -->
-    <color name="primary">#1E40AF</color>            <!-- Deep Tech Blue -->
-    <color name="brand_primary">#1E40AF</color>
-    <color name="primary_dark">#1E3A8A</color>
-    <color name="primary_light">#3B82F6</color>
-    <color name="accent">#0EA5E9</color>             <!-- Sky Blue Accent -->
-    <color name="brand_accent">#0EA5E9</color>
-    <color name="background">#F8FAFC</color>         <!-- Light Slate Surface -->
-    <color name="card_surface">#FFFFFF</color>       <!-- Pure White -->
-    <color name="surface_card">#FFFFFF</color>
-    <color name="text_primary">#0F172A</color>       <!-- Dark Navy/Slate -->
-    <color name="text_secondary">#475569</color>     <!-- Muted Slate -->
-    <color name="border_light">#E2E8F0</color>
-    <color name="divider">#F1F5F9</color>
+    <!-- Modern Cyber Red & Black Palette -->
+    <color name="primary">#DC2626</color>            <!-- Crimson Red -->
+    <color name="brand_primary">#DC2626</color>
+    <color name="primary_dark">#991B1B</color>       <!-- Deep Crimson -->
+    <color name="primary_light">#EF4444</color>      <!-- Bright Red Accent -->
+    <color name="accent">#FF2E2E</color>             <!-- Laser Red -->
+    <color name="brand_accent">#FF2E2E</color>
+    <color name="background">#09090B</color>         <!-- Deep Carbon / Obsidian Black -->
+    <color name="card_surface">#141418</color>       <!-- Charcoal Tech Surface -->
+    <color name="surface_card">#141418</color>
+    <color name="text_primary">#FAFAFA</color>       <!-- Crisp High-Contrast White -->
+    <color name="text_secondary">#A1A1AA</color>     <!-- Modern Muted Zinc -->
+    <color name="border_light">#27272E</color>       <!-- Sleek Dark Border -->
+    <color name="divider">#18181E</color>
 
-    <!-- Unified Status Badge Colors -->
-    <!-- Available / Working: #16A34A (Green) -->
-    <color name="status_available">#16A34A</color>
-    <color name="status_available_bg">#DCFCE7</color>
+    <!-- Status Badges -->
+    <color name="status_available">#22C55E</color>
+    <color name="status_available_bg">#14291B</color>
 
-    <!-- Assigned / In Use: #2563EB (Blue) -->
-    <color name="status_assigned">#2563EB</color>
-    <color name="status_assigned_bg">#DBEAFE</color>
+    <color name="status_assigned">#3B82F6</color>
+    <color name="status_assigned_bg">#122340</color>
 
-    <!-- Maintenance: #D97706 (Amber) -->
-    <color name="status_maintenance">#D97706</color>
-    <color name="status_maintenance_bg">#FEF3C7</color>
+    <color name="status_maintenance">#F59E0B</color>
+    <color name="status_maintenance_bg">#382408</color>
 
-    <!-- Defective / Disposed: #DC2626 (Red) -->
-    <color name="status_defective">#DC2626</color>
-    <color name="status_defective_bg">#FEE2E2</color>
+    <color name="status_defective">#EF4444</color>
+    <color name="status_defective_bg">#3B0E0E</color>
 
     <!-- Generic Basics -->
     <color name="white">#FFFFFF</color>

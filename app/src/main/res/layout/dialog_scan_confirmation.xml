@@ -109,7 +109,7 @@
             app:icon="@drawable/ic_refresh"
             app:iconTint="@color/text_secondary"
             app:iconGravity="textStart"
-            app:strokeColor="#CBD5E1" />
+            app:strokeColor="@color/border_light" />
 
         <!-- Completed (Open Item) -->
         <com.google.android.material.button.MaterialButton
