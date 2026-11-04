@@ -4,8 +4,7 @@
   "description": "IT Equipment Inventory Management System - Web Admin & Native Android Synchronization Backend",
   "main": "backend/server.js",
   "scripts": {
-    "start": "node backend/server.js",
-    "test-tidb": "node backend/test-tidb.js"
+    "start": "node backend/server.js"
   },
   "dependencies": {
     "dotenv": "^16.4.7",

@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.it_inventoryeq.adapters.ScanLogAdapter;
-import com.example.it_inventoryeq.database.LocalDatabaseHelper;
 import com.example.it_inventoryeq.models.EquipmentItem;
 import com.example.it_inventoryeq.models.ScanLog;
 import com.example.it_inventoryeq.models.User;
@@ -58,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
     private MaterialButton btnLookupManualTag;
 
     private ApiClient apiClient;
-    private LocalDatabaseHelper localDb;
     private User currentUser;
 
     private final ActivityResultLauncher<Intent> scannerLauncher =
@@ -70,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         apiClient = ApiClient.getInstance(this);
-        localDb = LocalDatabaseHelper.getInstance(this);
 
         currentUser = apiClient.getSavedUser();
         if (currentUser == null) {
